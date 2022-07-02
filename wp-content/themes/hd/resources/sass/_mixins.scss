@@ -1,0 +1,690 @@
+@use "sass:list";
+@use "sass:math";
+
+/** */
+
+@mixin not-xxdesktop {
+    @media (max-width: #{$xxdesktop-width - rem-calc(0.2)}) {
+        /*1536px*/
+        @content;
+    }
+}
+
+@mixin not-xdesktop {
+    @media (max-width: #{$xdesktop-width - rem-calc(0.2)}) {
+        /*1200px*/
+        @content;
+    }
+}
+
+@mixin not-desktop {
+    @media (max-width: #{$desktop-width - rem-calc(0.2)}) {
+        /*1025px*/
+        @content;
+    }
+}
+
+@mixin wp-mobile {
+    @media (max-width: #{$wp-mobile-width - rem-calc(0.2)}) {
+        /*782px*/
+        @content;
+    }
+}
+
+@mixin mobile {
+    @media (max-width: #{$mobile-width - rem-calc(0.2)}) {
+        /*640px*/
+        @content;
+    }
+}
+
+@mixin wp-mobile-small {
+    @media (max-width: #{$wp-mobile-small-width}) {
+        /*600px*/
+        @content;
+    }
+}
+
+@mixin mobile-portrait {
+    @media (max-width: #{$mobile-width - rem-calc(0.2)}) and (orientation: portrait) {
+        @content;
+    }
+}
+
+@mixin mobile-landscape {
+    @media (max-width: #{$mobile-width - rem-calc(0.2)}) and (orientation: landscape) {
+        @content;
+    }
+}
+
+@mixin not-mobile {
+    @media (min-width: #{$mobile-width}) {
+        /*640px*/
+        @content;
+    }
+}
+
+@mixin tablet {
+    @media (min-width: #{$mobile-width}) and (max-width: #{$desktop-width - rem-calc(0.2)}) {
+        @content;
+    }
+}
+
+@mixin wp-desktop {
+    @media (min-width: #{$wp-mobile-width + rem-calc(1)}) {
+        /*783px*/
+        @content;
+    }
+}
+
+@mixin desktop {
+    @media (min-width: #{$desktop-width}) {
+        /*1024px*/
+        @content;
+    }
+}
+
+@mixin xdesktop {
+    @media (min-width: #{$xdesktop-width}) {
+        /*1200px*/
+        @content;
+    }
+}
+
+@mixin xxdesktop {
+    @media (min-width: #{$xxdesktop-width}) {
+        /*1536px*/
+        @content;
+    }
+}
+
+@mixin media-max-width($width: #{$wp-mobile-width}) {
+    @media (max-width: #{$width}) {
+        @content;
+    }
+}
+
+@mixin media-min-width($width: #{$desktop-width}) {
+    @media (min-width: #{$width}) {
+        @content;
+    }
+}
+
+/** */
+
+@mixin font-size-heading($heading: h1) {
+    font-size: rem-calc(map-get($header-styles-small, $heading));
+    @include not-mobile {
+        font-size: rem-calc(map-get($header-styles-medium, $heading));
+    }
+}
+
+/** */
+
+@mixin responsive-bg-ratio($image-width: 204, $image-height: 81) {
+    background-size: cover;
+    height: 0;
+    padding-bottom: percentage(math.div($image-height, $image-width));
+    display: block;
+    object-fit: cover;
+    object-position: center;
+}
+
+@mixin responsive-wrapper($width: 100%) {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    transition: all 0.3s ease-in-out;
+    width: $width;
+    & > img {
+        display: block;
+        @include centering-elements;
+        height: 100% !important;
+        object-fit: cover;
+        object-position: center;
+        max-width: unset;
+        min-width: 100%;
+    }
+}
+
+@mixin responsive-scale($scale: 1.06, $opacity: 0.9) {
+    transform: scale(1.001);
+    will-change: transform;
+    transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.3s;
+    &:hover {
+        transform: scale($scale);
+        opacity: $opacity;
+    }
+}
+
+@mixin responsive-image-auto {
+    height: auto !important;
+    width: auto;
+    object-fit: contain;
+    object-position: center;
+    max-width: 100%;
+    max-height: 100%;
+    min-width: 90%;
+    min-height: 90%;
+}
+
+@mixin responsive-ratio($ratio-width: 3, $ratio-height: 2, $width: 100%) {
+    height: 0;
+    padding-bottom: #{math.div($width * $ratio-height, $ratio-width)};
+    aspect-ratio: auto list.slash($ratio-width, $ratio-height);
+    object-fit: scale-down;
+}
+
+/** */
+@mixin linear-gradient($angle: 135deg, $c: $color1, $amount: 12%) {
+    background: linear-gradient($angle, $c 0%, adjust-hue($c, $amount) 100%);
+}
+
+@mixin linear-gradient2($angle: 90deg, $c1: $color1, $c2: $color2) {
+    background: linear-gradient($angle, $c1 0%, $c2 100%);
+}
+
+@mixin gradient-text($angle: 135deg, $c: $color1, $amount: 10deg) {
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    background: linear-gradient($angle, $c, adjust-hue($c, $amount));
+    color: $c;
+    display: inline-block;
+}
+
+@mixin gradient-text2($angle: 135deg, $c1: $color1, $c2: $color2) {
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    background-image: linear-gradient(158deg, $c1 0%, $c2 100%);
+    color: transparent;
+    display: inline-block;
+}
+
+/** */
+@mixin box($width: 300, $height: $width) {
+    width: rem-calc($width);
+    height: rem-calc($height);
+}
+
+@mixin box2($width: 300px, $height: $width) {
+    width: $width;
+    height: $height;
+}
+
+@mixin clearfix {
+    &::after,
+    &::before {
+        display: table;
+        content: "";
+    }
+    &::after {
+        clear: both;
+    }
+}
+
+@mixin centering-elements($horizontal: true, $vertical: true) {
+    position: absolute;
+    @if $horizontal and $vertical {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    } @else if $horizontal {
+        left: 50%;
+        transform: translate(-50%, 0);
+    } @else if $vertical {
+        top: 50%;
+        transform: translate(0, -50%);
+    }
+}
+
+@mixin centering-elements2($width: 300, $height: $width) {
+    @include box($width, $height);
+    position: absolute;
+    top: calc(50% - #{rem-calc(math.div($height, 2))});
+    left: calc(50% - #{rem-calc(math.div($width, 2))});
+}
+
+@mixin absolute-full {
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
+@mixin fixed-full {
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+}
+
+/** */
+@mixin grid-gap2($d: 1, $t: 0, $m: 0, $gap: 30, $gap_m: 0) {
+    @include grid-gap($gap, $gap_m);
+    & > .cell {
+        @include grid-column2($d, $t, $m, $gap, $gap_m);
+    }
+}
+
+@mixin grid-gap($d: 30, $m: 20) {
+    gap: rem-calc($d);
+    @if ($m > 0) {
+        @include mobile {
+            gap: rem-calc($m);
+        }
+    }
+}
+
+@mixin grid-column2($d: 1, $t: 0, $m: 0, $gap: 0, $gap_mobile: 0) {
+    @include grid-column($d, $gap);
+    @if ($t > 0) {
+        @include not-desktop {
+            @include grid-column($t, $gap);
+        }
+    }
+    @if ($m > 0) {
+        @include mobile {
+            @if ($gap_mobile < 1) {
+                @include grid-column($m, $gap);
+            } @else {
+                @include grid-column($m, $gap_mobile);
+            }
+        }
+    }
+}
+
+@mixin grid-column($n: 1, $gap: 0) {
+    @if ($gap <= 0) {
+        @if ($n < 1) {
+            flex: 0 0 percentage($n);
+            max-width: percentage($n);
+        } @else {
+            flex: 0 0 percentage(math.div(1, $n));
+            max-width: percentage(math.div(1, $n));
+        }
+    } @else {
+        @if ($n < 1) {
+            flex: 0 0 percentage($n);
+            max-width: percentage($n);
+        } @else {
+            flex: 0 0 calc(#{percentage(math.div(1, $n))} - #{rem-calc(($n - 1) * math.div($gap, $n))});
+            max-width: calc(#{percentage(math.div(1, $n))} - #{rem-calc(($n - 1) * math.div($gap, $n))});
+        }
+    }
+}
+
+@mixin line-clamp($n: 2) {
+    @include webkit-line-clamp($n);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@mixin webkit-line-clamp($n: 2) {
+    -webkit-line-clamp: $n;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+}
+
+@mixin after-overlay {
+    position: relative;
+    &::after {
+        content: "";
+        opacity: 0;
+        @include absolute-full;
+    }
+}
+
+@mixin gradient-animation {
+    background-size: 500% 500%;
+    animation: gradient-animation 30s ease infinite;
+}
+
+@mixin image-animation {
+    animation: image-animation 30s ease infinite;
+    backface-visibility: hidden;
+}
+
+@mixin image-animation2 {
+    animation: image-animation2 30s ease infinite;
+    backface-visibility: hidden;
+}
+
+/** */
+@mixin right-fullwidth($padding: 15, $padding_m: 10) {
+    margin: 0 0 0 auto;
+    padding-left: rem-calc($padding);
+    max-width: calc(50% + #{math.div($global-width, 2) - rem-calc($padding)});
+    @include not-xxdesktop {
+        max-width: calc(50% + #{math.div($global-width-medium, 2) - rem-calc($padding)});
+    }
+    @include mobile {
+        padding-left: rem-calc($padding_m);
+        max-width: calc(50% + #{math.div($mobile-width, 2) - rem-calc($padding_m)});
+    }
+    &.width-extra {
+        @include xxdesktop {
+            max-width: calc(50% + #{math.div($global-width-extra, 2) - rem-calc($padding)});
+        }
+    }
+}
+
+@mixin left-fullwidth($padding: 15, $padding_m: 10) {
+    margin: 0 auto 0 0;
+    padding-right: rem-calc($padding);
+    max-width: calc(50% + #{math.div($global-width, 2) - rem-calc($padding)});
+    @include not-xxdesktop {
+        max-width: calc(50% + #{math.div($global-width-medium, 2) - rem-calc($padding)});
+    }
+    @include mobile {
+        padding-right: rem-calc($padding_m);
+        max-width: calc(50% + #{math.div($mobile-width, 2) - rem-calc($padding_m)});
+    }
+    &.width-extra {
+        @include xxdesktop {
+            max-width: calc(50% + #{math.div($global-width-extra, 2) - rem-calc($padding)});
+        }
+    }
+}
+
+@mixin grid-container($padding: 15, $padding_m: 10) {
+    max-width: $global-width;
+    @include not-xxdesktop {
+        max-width: $global-width-medium;
+    }
+    margin-left: auto;
+    margin-right: auto;
+    padding-right: rem-calc($padding_m);
+    padding-left: rem-calc($padding_m);
+    @include not-mobile {
+        padding-right: rem-calc($padding);
+        padding-left: rem-calc($padding);
+    }
+    &.width-extra {
+        @include xxdesktop {
+            max-width: $global-width-extra;
+        }
+    }
+}
+
+@mixin cell {
+    flex: 0 0 auto;
+    min-height: 0;
+    min-width: 0;
+    width: 100%;
+}
+
+@mixin grid-padding-x {
+    margin-left: -0.625rem;
+    margin-right: -0.625rem;
+    @include not-mobile {
+        margin-left: -0.9375rem;
+        margin-right: -0.9375rem;
+    }
+    & > .cell {
+        padding-left: 0.625rem;
+        padding-right: 0.625rem;
+        @include not-mobile {
+            padding-right: 0.9375rem;
+            padding-left: 0.9375rem;
+        }
+    }
+}
+
+@mixin flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@mixin flex-shrink {
+    flex: 0 0 auto;
+    max-width: 100%;
+}
+
+@mixin flex-auto {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+@mixin hover_color($c1: $color1, $c2: $color2) {
+    color: $c1;
+    &:hover {
+        color: $c2;
+    }
+}
+
+@mixin hover_svg($c1: $color1, $c2: $color2) {
+    fill: $c1;
+    &:hover {
+        fill: $c2;
+    }
+}
+
+@mixin mx-gutter {
+    margin-left: -0.625rem;
+    margin-right: -0.625rem;
+    @include not-mobile {
+        margin-left: -0.9375rem;
+        margin-right: -0.9375rem;
+    }
+}
+
+@mixin px-gutter {
+    padding-left: 0.625rem;
+    padding-right: 0.625rem;
+    @include not-mobile {
+        padding-left: 0.9375rem;
+        padding-right: 0.9375rem;
+    }
+}
+
+@mixin gutter-vertical-container($gap: 30, $mobile_gap: 20) {
+    @if ($mobile_gap > 0) {
+        margin-top: -#{rem-calc(math.div($mobile_gap, 2))};
+        margin-bottom: -#{rem-calc(math.div($mobile_gap, 2))};
+        @include not-mobile {
+            margin-top: -#{rem-calc(math.div($gap, 2))};
+            margin-bottom: -#{rem-calc(math.div($gap, 2))};
+        }
+        & > .cell {
+            padding-top: rem-calc(math.div($mobile_gap, 2));
+            padding-bottom: rem-calc(math.div($mobile_gap, 2));
+            @include not-mobile {
+                padding-top: rem-calc(math.div($gap, 2));
+                padding-bottom: rem-calc(math.div($gap, 2));
+            }
+        }
+    } @else {
+        margin-top: -#{rem-calc(math.div($gap, 2))} !important;
+        margin-bottom: -#{rem-calc(math.div($gap, 2))} !important;
+        & > .cell {
+            padding-top: rem-calc(math.div($gap, 2)) !important;
+            padding-bottom: rem-calc(math.div($gap, 2)) !important;
+        }
+    }
+}
+
+@mixin gutter-container($gap: 30, $mobile_gap: 20) {
+    @if ($mobile_gap > 0) {
+        margin-left: -#{rem-calc(math.div($mobile_gap, 2))};
+        margin-right: -#{rem-calc(math.div($mobile_gap, 2))};
+        @include not-mobile {
+            margin-left: -#{rem-calc(math.div($gap, 2))};
+            margin-right: -#{rem-calc(math.div($gap, 2))};
+        }
+        & > .cell {
+            padding-left: rem-calc(math.div($mobile_gap, 2));
+            padding-right: rem-calc(math.div($mobile_gap, 2));
+            @include not-mobile {
+                padding-right: rem-calc(math.div($gap, 2));
+                padding-left: rem-calc(math.div($gap, 2));
+            }
+        }
+    } @else {
+        margin-left: -#{rem-calc(math.div($gap, 2))} !important;
+        margin-right: -#{rem-calc(math.div($gap, 2))} !important;
+        & > .cell {
+            padding-right: rem-calc(math.div($gap, 2)) !important;
+            padding-left: rem-calc(math.div($gap, 2)) !important;
+        }
+    }
+}
+
+/** */
+@mixin underline($color: $gray, $height: 1px, $width: 100%, $left: 0, $bottom: 0) {
+    position: relative;
+    display: inline-block;
+    &::before {
+        content: "";
+        display: inline-block;
+        @include box2($height, $width);
+        position: absolute;
+        bottom: $bottom;
+        left: $left;
+        background-color: $color;
+        transform-origin: right center;
+        transform: scaleX(0);
+        transition: transform 0.2s cubic-bezier(1, 0, 0, 1);
+    }
+    &:hover {
+        &::before {
+            transform-origin: left center;
+            transform: scaleX(1);
+        }
+    }
+}
+
+/** */
+@mixin button-arrow($width: 16, $height: $width, $color: #fff) {
+    overflow-wrap: break-word;
+    &::after {
+        content: '';
+        display: inline-block;
+        margin: 0 0 0 10px;
+        @include box($width, $height);
+        background-image: inline-svg('<svg xmlns="http://www.w3.org/2000/svg" width="#{$width}" height="#{$height}" style="fill:#{$color};"><path d="m11.293 17.293 1.414 1.414L19.414 12l-6.707-6.707-1.414 1.414L15.586 11H6v2h9.586z"></path></svg>');
+        vertical-align: -10%;
+    }
+}
+@mixin button-scale($scale: 0.96) {
+    transition: all .3s ease-out .07s;
+    &:hover {
+        transition: all .3s ease-out .07s;
+        transform: scale($scale);
+    }
+}
+
+/*Button hover effect*/
+@mixin _effect1($c1: $black, $c2: $white) {
+    box-shadow: 0 0 0 2.5em $c1 inset;
+    background-color: transparent;
+    transition: all 300ms ease;
+    color: $c2;
+    &:hover {
+        box-shadow: 0 0 0 0 $c1 inset, 0 3px 10px rgb(0 0 0 / 30%);
+        color: $c1;
+        background-color: $c2;
+    }
+}
+
+// Button hover effect
+// http://el.commonsupport.com/newwp/autorex/services-2/
+@mixin _effect2($border: 0, $c1: $black, $c2: $white, $opacity_hover: 0.15) {
+    position: relative;
+    border-radius: $border;
+    &::before {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 0;
+        content: "";
+        background-color: $c1;
+        transition: 0.5s;
+        opacity: 0;
+        border-radius: $border;
+    }
+    &:hover {
+        &::before {
+            width: 100%;
+            opacity: $opacity_hover;
+        }
+    }
+}
+
+// Image Hover Effect
+// http://el.commonsupport.com/newwp/autorex/services-2/
+@mixin _effect3($bg: rgba(255, 255, 255, 0.2), $border: 0) {
+    position: relative;
+    overflow: hidden;
+    border-radius: $border;
+    &::before {
+        @include centering-elements;
+        display: block;
+        content: "";
+        width: 0;
+        height: 0;
+        background: $bg;
+        opacity: 0;
+        z-index: 10;
+        border-radius: $border;
+    }
+    &:hover {
+        opacity: 1;
+        &::before {
+            animation: circle 0.75s;
+        }
+    }
+}
+
+/** */
+/** functions to urlencode the svg string*/
+@function str-replace($string, $search, $replace: '') {
+    $index: str-index($string, $search);
+    @if $index {
+        @return str-slice($string, 1, $index - 1) + $replace + str-replace(str-slice($string, $index + str-length($search)), $search, $replace);
+    }
+    @return $string;
+}
+
+@function url-encode($string) {
+    $map: (
+            "%": "%25",
+            "<": "%3C",
+            ">": "%3E",
+            " ": "%20",
+            "!": "%21",
+            "*": "%2A",
+            "'": "%27",
+            '"': "%22",
+            "(": "%28",
+            ")": "%29",
+            ";": "%3B",
+            ":": "%3A",
+            "@": "%40",
+            "&": "%26",
+            "=": "%3D",
+            "+": "%2B",
+            "$": "%24",
+            ",": "%2C",
+            "/": "%2F",
+            "?": "%3F",
+            "#": "%23",
+            "[": "%5B",
+            "]": "%5D"
+    );
+    $new: $string;
+    @each $search, $replace in $map {
+        $new: str-replace($new, $search, $replace);
+    }
+    @return $new;
+}
+
+/** $string - svg */
+@function inline-svg($string) {
+    @return url('data:image/svg+xml;utf8,#{url-encode($string)}');
+}

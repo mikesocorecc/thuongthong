@@ -2,7 +2,7 @@
  * Variation Swatches for WooCommerce 
  * 
  * Author: Emran Ahmed ( emran.bd.08@gmail.com ) 
- * Date: 6/23/2022, 8:34:29 PM
+ * Date: 6/26/2022, 5:23:57 PM
  * Released under the GPLv3 license.
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -378,7 +378,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 } // $(this).trigger('focus') // Mobile tooltip
 
 
-                $(this).trigger('wvs-selected-item', [value, select, self._element]); // Custom Event for li
+                $(this).trigger('wvs-selected-item', [value, select, self.$element]); // Custom Event for li
               }); // Radio
 
               $(element).on('change.wvs', 'input.variable-item-radio-input:radio', function (event) {
@@ -430,7 +430,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
           if (woo_variation_swatches_options.show_variation_stock) {
             var max_stock_label = parseInt(woo_variation_swatches_options.stock_label_threshold, 10);
-            this.$element.on('wvs-selected-item.wc-variation-form', function () {
+            this.$element.on('wvs-selected-item.wvs', function (event) {
               var attributes = _this5.getChosenAttributes();
 
               var variations = _this5.findStockVariations(_this5.product_variations, attributes);
@@ -455,7 +455,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 });
               }
             });
-            this.$element.on('hide_variation.wc-variation-form', function () {
+            this.$element.on('hide_variation.wvs', function () {
               _this5.resetStockInfo();
             });
           }
@@ -637,21 +637,21 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 jQuery(function ($) {
   try {
-    $(document.body).on('woo_variation_swatches_init', function () {
+    $(document).on('woo_variation_swatches_init', function () {
       $('.variations_form:not(.wvs-loaded)').WooVariationSwatches(); // Any custom product with .woo_variation_swatches_variations_form class to support
 
       $('.woo_variation_swatches_variations_form:not(.wvs-loaded)').WooVariationSwatches(); // Yith Composite Product
 
       $('.ywcp_inner_selected_container:not(.wvs-loaded)').WooVariationSwatches();
-    }).trigger('woo_variation_swatches_init');
+    }); //.trigger('woo_variation_swatches_init')
   } catch (err) {
     // If failed (conflict?) log the error but don't stop other scripts breaking.
     window.console.log('Variation Swatches:', err);
   } // Init WooVariationSwatches after wc_variation_form script loaded.
 
 
-  $(document.body).on('wc_variation_form.wvs', function (event) {
-    $(document.body).trigger('woo_variation_swatches_init');
+  $(document).on('wc_variation_form.wvs', function (event) {
+    $(document).trigger('woo_variation_swatches_init');
   }); // Composite Product Load
   // JS API: https://docs.woocommerce.com/document/composite-products/composite-products-js-api-reference/
 

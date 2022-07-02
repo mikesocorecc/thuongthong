@@ -18,6 +18,7 @@ mix.webpackConfig({
     devtool: 'source-map'
 });
 
+/** */
 mix.disableNotifications()
     .options({
         processCssUrls: false,
@@ -30,17 +31,24 @@ mix.disableNotifications()
         ]
     });
 
-// mix.copyDirectory('resources/img', 'themes/img')
-//     .copyDirectory('resources/fonts/SVN-Poppins', 'themes/fonts/SVN-Poppins')
-//     .copyDirectory('resources/fonts/fontawesome/webfonts', 'themes/webfonts')
-//     .copyDirectory('resources/js/plugins', 'themes/js/plugins');
+// mix.copyDirectory('resources/img', 'assets/img')
+//     .copyDirectory('resources/fonts/SVN-Poppins', 'assets/fonts/SVN-Poppins')
+//     .copyDirectory('resources/fonts/Proxima-Nova', 'assets/fonts/Proxima-Nova')
+//     .copyDirectory('resources/fonts/fontawesome/webfonts', 'assets/webfonts')
+//     .copyDirectory('resources/js/plugins', 'assets/js/plugins');
 
-mix.setPublicPath('themes')
+/** */
+mix.setPublicPath('assets')
     .sourceMaps()
 
+    //.js('resources/js/login.js', 'js')
+    //.js('resources/js/admin.js', 'js')
     //.js('resources/js/draggable.js', 'js/plugins')
+    //.js('resources/js/parallax-scroll.js', 'js/plugins')
     .js('resources/js/app.js', 'js')
 
     //.sass('resources/sass/fonts.scss', 'css')
-    .sass('resources/sass/plugins.scss', 'css')
+    //.sass('resources/sass/admin.scss', 'css')
+    //.sass('resources/sass/editor-style.scss', 'css')
+    //.sass('resources/sass/plugins.scss', 'css')
     .sass('resources/sass/app.scss', 'css');

@@ -1,0 +1,76 @@
+@import "~foundation-sites/scss/util/util";
+
+/** */
+$black: #000000;
+$medium-black: #444444;
+$white: #ffffff;
+$background-color: rgba(245, 248, 255, 0.8);
+
+$heading-color: #000000;
+
+$light-gray: #e6e6e6;
+$medium-gray: #cacaca;
+$gray: #8a8a8a;
+
+$color1: #0576bc;
+$color2: #ee1b24;
+$color3: #efe917;
+$color-red: #ee1b24;
+
+/** */
+$scrollbar-with: rem-calc(4);
+$scrollbar-height: rem-calc(4);
+
+$global-width-extra: rem-calc(1360);
+$global-width: rem-calc(1200);
+$global-width-medium: rem-calc(1140);
+$global-width-small: rem-calc(960);
+
+/** */
+$mobile-width: rem-calc(640);
+$desktop-width: rem-calc(1025);
+$xdesktop-width: rem-calc(1200);
+$xxdesktop-width: rem-calc(1536);
+
+$wp-mobile-width: rem-calc(782);
+$wp-mobile-small-width: rem-calc(600);
+
+/** */
+$foundation-palette: (
+    primary: $color1,
+    secondary: $color2,
+    success: lighten($color1, 10),
+    warning: $color2,
+    alert: lighten($color2, 10),
+);
+
+$primary-color: get-color(primary);
+$success-color: get-color(success);
+$secondary-color: get-color(secondary);
+$warning-color: get-color(warning);
+$alert-color: get-color(alert);
+
+/** */
+$header-styles-small: (
+    h1: 36,
+    h2: 30,
+    h3: 25,
+    h4: 21,
+    h5: 18,
+    h6: 16,
+);
+$header-styles-medium: (
+    h1: 42,
+    h2: 35,
+    h3: 29,
+    h4: 24,
+    h5: 20,
+    h6: 17,
+);
+
+/** */
+$body-background: $background-color;
+$body-font-color: $black;
+$body-font-size: rem-calc(16);
+$body-font-family: "Proxima Nova", -apple-system, BlinkMacSystemFont, "Segoe UI", "Ubuntu", Arial, sans-serif;
+$font-awesome: "Font Awesome 6 Pro", "Font Awesome 6 Brands", "Font Awesome 6 Free", sans-serif;

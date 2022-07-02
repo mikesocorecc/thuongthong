@@ -64,7 +64,7 @@
             }
             
             public function disable_out_of_stock_item( $default, $variation ) {
-                if ( ! $variation->is_in_stock() && wc_string_to_bool( woo_variation_swatches()->get_option( 'hide_out_of_stock_variation', 'yes' ) ) ) {
+                if ( woo_variation_swatches()->is_pro() && ! $variation->is_in_stock() && wc_string_to_bool( woo_variation_swatches()->get_option( 'hide_out_of_stock_variation', 'yes' ) ) ) {
                     return false;
                 }
                 

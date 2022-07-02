@@ -258,119 +258,119 @@ msgstr ""
 msgid "Swatches Archive Default Selected"
 msgstr ""
 
-#: ../includes/class-woo-variation-swatches-settings.php:239
+#: ../includes/class-woo-variation-swatches-settings.php:238
 msgid "Swatches Settings Reset."
 msgstr ""
 
-#: ../includes/class-woo-variation-swatches-settings.php:278, ../includes/getwooplugins/class-getwooplugins-settings-page.php:129
+#: ../includes/class-woo-variation-swatches-settings.php:277, ../includes/getwooplugins/class-getwooplugins-settings-page.php:129
 msgid "General"
 msgstr ""
 
-#: ../includes/class-woo-variation-swatches-settings.php:279
+#: ../includes/class-woo-variation-swatches-settings.php:278
 msgid "Advanced"
 msgstr ""
 
-#: ../includes/class-woo-variation-swatches-settings.php:280
+#: ../includes/class-woo-variation-swatches-settings.php:279
 msgid "Styling"
 msgstr ""
 
-#: ../includes/class-woo-variation-swatches-settings.php:281
+#: ../includes/class-woo-variation-swatches-settings.php:280
 msgid "Product Page"
 msgstr ""
 
-#: ../includes/class-woo-variation-swatches-settings.php:282
+#: ../includes/class-woo-variation-swatches-settings.php:281
 msgid "Archive / Shop"
 msgstr ""
 
-#: ../includes/class-woo-variation-swatches-settings.php:283
+#: ../includes/class-woo-variation-swatches-settings.php:282
 msgid "Special Attributes"
 msgstr ""
 
-#: ../includes/class-woo-variation-swatches-settings.php:284, ../includes/class-woo-variation-swatches-term-meta.php:103
+#: ../includes/class-woo-variation-swatches-settings.php:283, ../includes/class-woo-variation-swatches-term-meta.php:103
 msgid "Group"
 msgstr ""
 
-#: ../includes/class-woo-variation-swatches-settings.php:286
+#: ../includes/class-woo-variation-swatches-settings.php:285
 msgid "License"
 msgstr ""
 
-#: ../includes/class-woo-variation-swatches-settings.php:289
+#: ../includes/class-woo-variation-swatches-settings.php:288
 msgid "Tutorial"
 msgstr ""
 
-#: ../includes/class-woo-variation-swatches-settings.php:294
+#: ../includes/class-woo-variation-swatches-settings.php:293
 msgid "Useful Free Plugins"
 msgstr ""
 
-#: ../includes/class-woo-variation-swatches-settings.php:323
+#: ../includes/class-woo-variation-swatches-settings.php:322
 msgid "General options"
 msgstr ""
 
-#: ../includes/class-woo-variation-swatches-settings.php:330
+#: ../includes/class-woo-variation-swatches-settings.php:329
 msgid "Enable Stylesheet"
 msgstr ""
 
-#: ../includes/class-woo-variation-swatches-settings.php:331
+#: ../includes/class-woo-variation-swatches-settings.php:330
 msgid "Enable default stylesheet"
 msgstr ""
 
-#: ../includes/class-woo-variation-swatches-settings.php:338
+#: ../includes/class-woo-variation-swatches-settings.php:337
 msgid "Enable Tooltip"
 msgstr ""
 
-#: ../includes/class-woo-variation-swatches-settings.php:339
+#: ../includes/class-woo-variation-swatches-settings.php:338
 msgid "Enable tooltip on each product attribute."
 msgstr ""
 
-#: ../includes/class-woo-variation-swatches-settings.php:346
+#: ../includes/class-woo-variation-swatches-settings.php:345
 msgid "Shape Style"
 msgstr ""
 
-#: ../includes/class-woo-variation-swatches-settings.php:348
+#: ../includes/class-woo-variation-swatches-settings.php:347
 msgid "This controls which shape style used by default."
 msgstr ""
 
-#: ../includes/class-woo-variation-swatches-settings.php:355
+#: ../includes/class-woo-variation-swatches-settings.php:354
 msgid "Rounded Shape"
 msgstr ""
 
-#: ../includes/class-woo-variation-swatches-settings.php:356
+#: ../includes/class-woo-variation-swatches-settings.php:355
 msgid "Squared Shape"
 msgstr ""
 
-#: ../includes/class-woo-variation-swatches-settings.php:363
+#: ../includes/class-woo-variation-swatches-settings.php:362
 msgid "Dropdowns to Button"
 msgstr ""
 
-#: ../includes/class-woo-variation-swatches-settings.php:364
+#: ../includes/class-woo-variation-swatches-settings.php:363
 msgid "Convert default dropdowns to button."
 msgstr ""
 
-#: ../includes/class-woo-variation-swatches-settings.php:373
+#: ../includes/class-woo-variation-swatches-settings.php:372
 msgid "Dropdowns to Image"
 msgstr ""
 
-#: ../includes/class-woo-variation-swatches-settings.php:374
+#: ../includes/class-woo-variation-swatches-settings.php:373
 msgid "Convert default dropdowns to image type if variation has an image."
 msgstr ""
 
-#: ../includes/class-woo-variation-swatches-settings.php:395
+#: ../includes/class-woo-variation-swatches-settings.php:394
 msgid "Advanced options"
 msgstr ""
 
-#: ../includes/class-woo-variation-swatches-settings.php:402
+#: ../includes/class-woo-variation-swatches-settings.php:401
 msgid "Clear on Reselect"
 msgstr ""
 
-#: ../includes/class-woo-variation-swatches-settings.php:403
+#: ../includes/class-woo-variation-swatches-settings.php:402
 msgid "Clear selected attribute on select again"
 msgstr ""
 
-#: ../includes/class-woo-variation-swatches-settings.php:411
+#: ../includes/class-woo-variation-swatches-settings.php:410
 msgid "Disable Out of Stock"
 msgstr ""
 
-#: ../includes/class-woo-variation-swatches-settings.php:412
+#: ../includes/class-woo-variation-swatches-settings.php:411
 msgid "Disable Out Of Stock item"
 msgstr ""
 
