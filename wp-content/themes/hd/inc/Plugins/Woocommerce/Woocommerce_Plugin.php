@@ -41,10 +41,55 @@ if ( ! class_exists( 'Woocommerce_Plugin' ) ) {
 
                 echo '<style>#wpadminbar + #wpbody { margin-top: 0 !important; }</style>';
             });
+
+            // -------------------------------------------------------------
+
+            add_filter('woocommerce_product_single_add_to_cart_text', function () {
+                return __('Thêm vào giỏ hàng', 'hd');
+            });
+
+            add_filter('woocommerce_product_add_to_cart_text', function () {
+                return __('Thêm vào giỏ', 'hd');
+            });
+
+            // ---------------------------------------------------------------
+
+            add_action('wp', [&$this, 'visited_product_cookie']);
 		}
 
 		/** ---------------------------------------- */
 		/** ---------------------------------------- */
+        /**
+         * @return void
+         */
+        public function visited_product_cookie()
+        {
+            if (!is_singular('product')) {
+                return;
+            }
+
+            global $post;
+
+            if (empty($_COOKIE['woocommerce_recently_viewed'])) {
+                $viewed_products = [];
+            } else {
+                $viewed_products = wp_parse_id_list((array) explode('|', wp_unslash($_COOKIE['woocommerce_recently_viewed'])));
+            }
+
+            $keys = array_flip($viewed_products);
+
+            if (isset($keys[$post->ID])) {
+                unset($viewed_products[$keys[$post->ID]]);
+            }
+
+            $viewed_products[] = $post->ID;
+
+            if (count($viewed_products) > 22) {
+                array_shift($viewed_products);
+            }
+
+            wc_setcookie('woocommerce_recently_viewed', implode('|', $viewed_products));
+        }
 
 		/**
 		 * @param $mailer

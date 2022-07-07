@@ -26,7 +26,7 @@ if (!$next_post) {
     <div class="pagination-single-inner">
         <?php if ($prev_post) : ?>
 		<a class="previous-post cover" href="<?php echo esc_url(get_permalink($prev_post->ID)); ?>">
-			<span class="res auto ratio-16v9">
+			<span class="res ratio-16v9">
 				<?php echo get_the_post_thumbnail( $prev_post, 'medium' ); ?>
 				<span class="arrow" aria-hidden="true"></span>
 			</span>
@@ -35,7 +35,7 @@ if (!$next_post) {
         <?php endif; ?>
         <?php if ($next_post) : ?>
 		<a class="next-post cover" href="<?php echo esc_url(get_permalink($next_post->ID)); ?>">
-			<span class="res auto ratio-16v9">
+			<span class="res ratio-16v9">
 				<?php echo get_the_post_thumbnail( $next_post, 'medium' ); ?>
 				<span class="arrow" aria-hidden="true"></span>
 			</span>

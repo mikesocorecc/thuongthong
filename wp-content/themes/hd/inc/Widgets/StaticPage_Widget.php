@@ -49,7 +49,7 @@ if (!class_exists('StaticPage_Widget')) {
 
             ?>
             <section class="section brief-intro <?= $_class ?>">
-                <div class="<?=$ACF->kind_view?> width-extra">
+                <div class="<?=$ACF->kind_view?> width-extra brief-intro-inner">
                     <div class="left-col">
                         <?php if ($ACF->sub_title) : ?>
                         <h6 class="sub-title"><?php echo $ACF->sub_title; ?></h6>
@@ -68,7 +68,7 @@ if (!class_exists('StaticPage_Widget')) {
                         <div class="html-desc"><?php echo $ACF->html_desc; ?></div>
                         <?php endif; ?>
                         <?php if ($ACF->url) : ?>
-                        <a href="<?= esc_url($ACF->url); ?>" class="button button-arrow" title="<?php echo esc_attr($ACF->button_text); ?>"><?php echo $ACF->button_text; ?></a>
+                        <a href="<?= esc_url($ACF->url); ?>" class="view-more button" title="<?php echo esc_attr($ACF->button_text); ?>"><?php echo $ACF->button_text; ?></a>
                         <?php endif; ?>
                     </div>
                     <?php if (Str::stripSpace($ACF->background_img)) : ?>

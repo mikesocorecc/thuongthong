@@ -23,31 +23,10 @@ if (is_search()) {
 
 ?>
 <section class="section archives archive-posts">
-    <div class="grid-container">
-		<?php //get_template_part( 'template-parts/posts/grid' ); ?>
-        <?php
-        $_class = '';
-        if (is_active_sidebar('w-newsbar-sidebar'))
-            $_class = ' l-7 has-sidebar';
-        ?>
-        <div class="grid-x grid-padding-x">
-            <div class="cell<?=$_class?>">
-                <div class="section posts-section vertical-posts">
-                    <h2 class="heading-title h5"><?=$archive_title?></h2>
-                    <?php if ( Str::stripSpace( $desc ) ) : ?>
-                    <div class="archive-desc heading-desc"><?= $desc ?></div>
-                    <?php endif; ?>
-                    <?php get_template_part( 'template-parts/posts/list' ); ?>
-                </div>
-            </div>
-            <?php
-            // sidebar
-            if (is_active_sidebar('w-newsbar-sidebar')) :
-                echo '<div class="cell auto"><div class="sidebar-container">';
-                dynamic_sidebar('w-newsbar-sidebar');
-                echo '</div></div>';
-            endif;
-            ?>
-        </div>
+    <div class="grid-container width-extra">
+        <?php if ( Str::stripSpace( $desc ) ) : ?>
+        <div class="archive-desc heading-desc"><?= $desc ?></div>
+        <?php endif; ?>
+		<?php get_template_part( 'template-parts/posts/grid' ); ?>
     </div>
 </section>

@@ -119,6 +119,31 @@
     }
 }
 
+@mixin _webkit-scrollbar($width: 4, $height: $width) {
+    &::-webkit-scrollbar {
+        height: rem-calc($height);
+        width: rem-calc($width);
+    }
+}
+
+@mixin _placeholder($color: $gray) {
+    &::placeholder {
+        color: $color;
+    }
+}
+
+@mixin _webkit-scrollbar-track($bg_color: $light-gray) {
+    &::-webkit-scrollbar-track {
+        background-color: $bg_color;
+    }
+}
+
+@mixin _webkit-scrollbar-thumb($bg_color: $gray) {
+    &::-webkit-scrollbar-thumb {
+        background-color: $bg_color;
+    }
+}
+
 /** */
 
 @mixin responsive-bg-ratio($image-width: 204, $image-height: 81) {
@@ -357,17 +382,17 @@
 @mixin right-fullwidth($padding: 15, $padding_m: 10) {
     margin: 0 0 0 auto;
     padding-left: rem-calc($padding);
-    max-width: calc(50% + #{math.div($global-width, 2) - rem-calc($padding)});
+    max-width: calc(50% + #{math.div($global-width, 2)});
     @include not-xxdesktop {
-        max-width: calc(50% + #{math.div($global-width-medium, 2) - rem-calc($padding)});
+        max-width: calc(50% + #{math.div($global-width-medium, 2)});
     }
     @include mobile {
         padding-left: rem-calc($padding_m);
-        max-width: calc(50% + #{math.div($mobile-width, 2) - rem-calc($padding_m)});
+        max-width: calc(50% + #{math.div($mobile-width, 2)});
     }
     &.width-extra {
         @include xxdesktop {
-            max-width: calc(50% + #{math.div($global-width-extra, 2) - rem-calc($padding)});
+            max-width: calc(50% + #{math.div($global-width-extra, 2)});
         }
     }
 }
@@ -375,17 +400,17 @@
 @mixin left-fullwidth($padding: 15, $padding_m: 10) {
     margin: 0 auto 0 0;
     padding-right: rem-calc($padding);
-    max-width: calc(50% + #{math.div($global-width, 2) - rem-calc($padding)});
+    max-width: calc(50% + #{math.div($global-width, 2)});
     @include not-xxdesktop {
-        max-width: calc(50% + #{math.div($global-width-medium, 2) - rem-calc($padding)});
+        max-width: calc(50% + #{math.div($global-width-medium, 2)});
     }
     @include mobile {
         padding-right: rem-calc($padding_m);
-        max-width: calc(50% + #{math.div($mobile-width, 2) - rem-calc($padding_m)});
+        max-width: calc(50% + #{math.div($mobile-width, 2)});
     }
     &.width-extra {
         @include xxdesktop {
-            max-width: calc(50% + #{math.div($global-width-extra, 2) - rem-calc($padding)});
+            max-width: calc(50% + #{math.div($global-width-extra, 2)});
         }
     }
 }
@@ -432,6 +457,16 @@
             padding-left: 0.9375rem;
         }
     }
+}
+
+@mixin flex-align-center {
+    display: flex;
+    align-items: center;
+}
+
+@mixin flex-justify-center {
+    display: flex;
+    justify-content: center;
 }
 
 @mixin flex-center {
@@ -541,7 +576,7 @@
     &::before {
         content: "";
         display: inline-block;
-        @include box2($height, $width);
+        @include box2($width, $height);
         position: absolute;
         bottom: $bottom;
         left: $left;
@@ -570,7 +605,7 @@
         vertical-align: -10%;
     }
 }
-@mixin button-scale($scale: 0.96) {
+@mixin button-scale($scale: 0.98) {
     transition: all .3s ease-out .07s;
     &:hover {
         transition: all .3s ease-out .07s;
@@ -593,9 +628,9 @@
 
 // Button hover effect
 // http://el.commonsupport.com/newwp/autorex/services-2/
-@mixin _effect2($border: 0, $c1: $black, $c2: $white, $opacity_hover: 0.15) {
+@mixin _effect2($border_radius: 0, $c: $black, $opacity_hover: 0.15) {
     position: relative;
-    border-radius: $border;
+    border-radius: $border_radius;
     &::before {
         position: absolute;
         left: 0;
@@ -603,10 +638,10 @@
         height: 100%;
         width: 0;
         content: "";
-        background-color: $c1;
+        background-color: $c;
         transition: 0.5s;
         opacity: 0;
-        border-radius: $border;
+        border-radius: $border_radius;
     }
     &:hover {
         &::before {

@@ -195,17 +195,20 @@ if (!function_exists('woo_get_gallery_image_html')) {
 			$ratio_class = '1v1';
 		}
 
-		return '<div data-thumb="' . esc_url($thumbnail_src[0]) . '" data-thumb-alt="' . esc_attr($alt_text) . '" class="woocommerce-product-gallery__image"><a class="res ratio-' . $ratio_class . '" href="' . esc_url($full_src[0]) . '">' . $image . '</a></div>';
+		return '<div data-thumb="' . esc_url($thumbnail_src[0]) . '" data-thumb-alt="' . esc_attr($alt_text) . '" class="woocommerce-product-gallery__image"><a class="res auto ratio-' . $ratio_class . '" href="' . esc_url($full_src[0]) . '">' . $image . '</a></div>';
 	}
 }
 
 // -------------------------------------------------------------
 
-add_filter('woocommerce_product_single_add_to_cart_text', function () {
-	return __('Thêm vào giỏ hàng', 'hd');
-});
+if ( ! function_exists( 'woocommerce_output_recently_viewed_products' ) ) {
 
+    add_action( 'woocommerce_after_single_product_summary', 'woocommerce_output_recently_viewed_products', 19 );
 
-add_filter('woocommerce_product_add_to_cart_text', function () {
-	return __('Thêm vào giỏ', 'hd');
-});
+    /**
+     * Output the product sale flash.
+     */
+    function woocommerce_output_recently_viewed_products() {
+        wc_get_template( 'single-product/recently_viewed.php' );
+    }
+}

@@ -10,6 +10,7 @@
     "@babel/plugin-transform-runtime": "^7.18.5",
     "@babel/preset-env": "^7.18.2",
     "@fancyapps/ui": "^4.0.27",
+    "@formkit/auto-animate": "^1.0.0-beta.1",
     "@nobleclem/jquery-multiselect": "^2.4.21",
     "@popperjs/core": "^2.11.5",
     "@wordpress/browserslist-config": "^4.1.2",

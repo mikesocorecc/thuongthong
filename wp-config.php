@@ -39,9 +39,9 @@ const WP_AUTO_UPDATE_CORE = false;
 // ** Database settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */
 
-const DB_NAME = 'thuongthong';
-const DB_USER = 'root';
-const DB_PASSWORD = 'root';
+const DB_NAME = 'kt6hdweb24h_thuongthong';
+const DB_USER = 'kt6hdweb24h_thuongthong';
+const DB_PASSWORD = 'ejh2WYjD!QIGd';
 const DB_HOST = 'localhost';
 const DB_CHARSET = 'utf8mb4';
 const DB_COLLATE = '';
@@ -88,7 +88,7 @@ $table_prefix = 'w_';
  *
  * @link https://wordpress.org/support/article/debugging-in-wordpress/
  */
-const WP_DEBUG = true;
+const WP_DEBUG = false;
 
 /* Add any custom values between this line and the "stop editing" line. */
 

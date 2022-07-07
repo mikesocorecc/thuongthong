@@ -5,7 +5,7 @@
 if ( have_posts() ) :
 
 ?>
-<div class="section grid-posts grid-x grid-padding-x small-up-1 medium-up-2 large-up-3">
+<div class="section grid-posts grid-x">
     <?php
 
     // Start the Loop.

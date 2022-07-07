@@ -75,7 +75,9 @@ if (!class_exists('CustomerCarousel_Widget')) {
                                     <?php endif; ?>
                                     <?php if ($item['ten'] || $item['img']) : ?>
                                     <div class="info">
+                                        <?php if ($item['img']) : ?>
                                         <span class="img"><?php echo wp_get_attachment_image($item['img'], 'thumbnail');?></span>
+                                        <?php endif; ?>
                                         <span class="ten"><?php echo $item['ten']?></span>
                                     </div>
                                     <?php endif; ?>

@@ -27,6 +27,52 @@ Fancybox.bind(".fcy-video, .fcy-popup", {});
 $(() => {
 
     /** */
+    let woo_image = $(".woocommerce-product-gallery__image");
+    woo_image.each(function () {
+        $(this).on('click', function (e) {
+            e.preventDefault();
+            $(".woocommerce-product-gallery__trigger").trigger('click');
+        });
+    });
+
+    /** */
+    $('.variations_form').each(function () {
+
+        // when variation is found, do something
+        $(this).on('found_variation', function (event, variation) {
+            if (variation.price_html != '') {
+                $(".single-price").html(variation.price_html);
+            }
+        });
+    });
+
+    /**qty*/
+    $('.input-number-increment').on('click', function (e) {
+        e.preventDefault();
+        let $input = $(this).parents('.input-number-group').find('.qty');
+        let val = parseInt($input.val(), 10);
+        $input.val(val + 1);
+
+        let update_cart = $('button[name="update_cart"]');
+        if (update_cart.length > 0) {
+            update_cart.prop('disabled', false)
+        }
+    });
+    $('.input-number-decrement').on('click', function (e) {
+        e.preventDefault();
+        let $input = $(this).parents('.input-number-group').find('.qty');
+        let val = parseInt($input.val(), 10);
+        if (val > 1) {
+            $input.val(val - 1);
+
+            let update_cart = $('button[name="update_cart"]');
+            if (update_cart.length > 0) {
+                update_cart.prop('disabled', false)
+            }
+        }
+    });
+
+    /** */
     let _desc_inner = $('.product-cat-desc-inner');
     if (_desc_inner.length > 0) {
         let _height = _desc_inner.outerHeight(false);

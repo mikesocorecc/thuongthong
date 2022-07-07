@@ -154,40 +154,40 @@ if ( ! class_exists( 'Customizer' ) ) {
             // -------------------------------------------------------------
 
             // Create product section
-//            $wp_customize->add_section(
-//                'product_menu_section',
-//                [
-//                    'title'    => __( 'Products image', 'hd' ),
-//                    'panel'    => 'addon_menu_panel',
-//                    'priority' => 1002,
-//                ]
-//            );
+            $wp_customize->add_section(
+                'product_menu_section',
+                [
+                    'title'    => __( 'Products image', 'hd' ),
+                    'panel'    => 'addon_menu_panel',
+                    'priority' => 1002,
+                ]
+            );
 
-            // add product control
-//            $wp_customize->add_setting(
-//                'product_menu_setting',
-//                [
-//                    'default'           => 'default',
-//                    'sanitize_callback' => 'sanitize_text_field',
-//                    'transport'         => 'refresh',
-//                ]
-//            );
-//            $wp_customize->add_control(
-//                'product_menu_control',
-//                [
-//                    'label'    => __( 'Image ratio', 'hd' ),
-//                    'type'     => 'radio',
-//                    'section'  => 'product_menu_section',
-//                    'settings' => 'product_menu_setting',
-//                    'choices'  => [
-//                        '1v1'     => __( '1:1', 'hd' ),
-//                        '3v2'     => __( '3:2', 'hd' ),
-//                        '4v3'     => __( '4:3', 'hd' ),
-//                        '16v9'    => __( '16:9', 'hd' ),
-//                        'default' => __( 'Ratio default (16:9)', 'hd' ),
-//                    ],
-//                ]
-//            );
+            // Add product control
+            $wp_customize->add_setting(
+                'product_menu_setting',
+                [
+                    'default'           => 'default',
+                    'sanitize_callback' => 'sanitize_text_field',
+                    'transport'         => 'refresh',
+                ]
+            );
+            $wp_customize->add_control(
+                'product_menu_control',
+                [
+                    'label'    => __( 'Image ratio', 'hd' ),
+                    'type'     => 'radio',
+                    'section'  => 'product_menu_section',
+                    'settings' => 'product_menu_setting',
+                    'choices'  => [
+                        '1v1'     => __( '1:1', 'hd' ),
+                        '3v2'     => __( '3:2', 'hd' ),
+                        '4v3'     => __( '4:3', 'hd' ),
+                        '16v9'    => __( '16:9', 'hd' ),
+                        'default' => __( 'Ratio default (16:9)', 'hd' ),
+                    ],
+                ]
+            );
 
 			// -------------------------------------------------------------
 			// -------------------------------------------------------------

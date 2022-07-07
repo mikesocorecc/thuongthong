@@ -18,6 +18,7 @@ use Webhd\Widgets\StaticPage_Widget;
 use Webhd\Widgets\CustomerCarousel_Widget;
 use Webhd\Widgets\ProductCat_Widget;
 use Webhd\Widgets\FilterTabsProducts_Widget;
+use Webhd\Widgets\PageTitle_Widget;
 
 if (!function_exists('__register_widgets')) {
 
@@ -42,6 +43,7 @@ if (!function_exists('__register_widgets')) {
         class_exists(DropdownSearch_Widget::class) && register_widget(new DropdownSearch_Widget);
         class_exists(Search_Widget::class) && register_widget(new Search_Widget);
         class_exists(offCanvas_Widget::class) && register_widget(new offCanvas_Widget);
+        class_exists(PageTitle_Widget::class) && register_widget(new PageTitle_Widget);
     }
 
     /** */

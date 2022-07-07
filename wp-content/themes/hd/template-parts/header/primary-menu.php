@@ -14,6 +14,6 @@ if (!has_nav_menu('main-nav')) :
 endif;
 
 ?>
-<nav class="h-100" id="primary-nav" role="navigation" aria-label="<?php echo esc_attr__('Primary Navigation', 'hd'); ?>">
+<nav id="primary-nav" class="navigation" role="navigation" aria-label="<?php echo esc_attr__('Primary Navigation', 'hd'); ?>">
 	<?php echo main_nav(); ?>
 </nav>

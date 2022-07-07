@@ -126,7 +126,7 @@ if (!class_exists('PostsCarousel_Widget')) {
 					</div>
 				</div>
 				<?php if ($ACF->url) : ?>
-                <a href="<?= esc_url($ACF->url) ?>" class="button button-arrow" title="<?php echo esc_attr($ACF->button_text) ?>"><?php echo $ACF->button_text; ?></a>
+                <a href="<?= esc_url($ACF->url) ?>" class="viewmore button" title="<?php echo esc_attr($ACF->button_text) ?>"><?php echo $ACF->button_text; ?></a>
 				<?php endif; ?>
 				<?php if (!$ACF->full_width) echo '</div>';
 				unset($ACF);

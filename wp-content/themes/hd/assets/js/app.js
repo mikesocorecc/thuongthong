@@ -178,6 +178,52 @@ _fancyapps_ui__WEBPACK_IMPORTED_MODULE_5__.Fancybox.bind(".fcy-video, .fcy-popup
 
 $(function () {
   /** */
+  var woo_image = $(".woocommerce-product-gallery__image");
+  woo_image.each(function () {
+    $(this).on('click', function (e) {
+      e.preventDefault();
+      $(".woocommerce-product-gallery__trigger").trigger('click');
+    });
+  });
+  /** */
+
+  $('.variations_form').each(function () {
+    // when variation is found, do something
+    $(this).on('found_variation', function (event, variation) {
+      if (variation.price_html != '') {
+        $(".single-price").html(variation.price_html);
+      }
+    });
+  });
+  /**qty*/
+
+  $('.input-number-increment').on('click', function (e) {
+    e.preventDefault();
+    var $input = $(this).parents('.input-number-group').find('.qty');
+    var val = parseInt($input.val(), 10);
+    $input.val(val + 1);
+    var update_cart = $('button[name="update_cart"]');
+
+    if (update_cart.length > 0) {
+      update_cart.prop('disabled', false);
+    }
+  });
+  $('.input-number-decrement').on('click', function (e) {
+    e.preventDefault();
+    var $input = $(this).parents('.input-number-group').find('.qty');
+    var val = parseInt($input.val(), 10);
+
+    if (val > 1) {
+      $input.val(val - 1);
+      var update_cart = $('button[name="update_cart"]');
+
+      if (update_cart.length > 0) {
+        update_cart.prop('disabled', false);
+      }
+    }
+  });
+  /** */
+
   var _desc_inner = $('.product-cat-desc-inner');
 
   if (_desc_inner.length > 0) {
@@ -18428,7 +18474,10 @@ function A11y(_ref) {
       addElRoleDescription((0,_shared_dom_js__WEBPACK_IMPORTED_MODULE_1__["default"])(swiper.slides), params.itemRoleDescriptionMessage);
     }
 
-    addElRole((0,_shared_dom_js__WEBPACK_IMPORTED_MODULE_1__["default"])(swiper.slides), params.slideRole);
+    if (params.slideRole) {
+      addElRole((0,_shared_dom_js__WEBPACK_IMPORTED_MODULE_1__["default"])(swiper.slides), params.slideRole);
+    }
+
     const slidesLength = swiper.params.loop ? swiper.slides.filter(el => !el.classList.contains(swiper.params.slideDuplicateClass)).length : swiper.slides.length;
 
     if (params.slideLabelMessage) {
@@ -24897,7 +24946,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_effect_creative_effect_creative_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./modules/effect-creative/effect-creative.js */ "./node_modules/swiper/modules/effect-creative/effect-creative.js");
 /* harmony import */ var _modules_effect_cards_effect_cards_js__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./modules/effect-cards/effect-cards.js */ "./node_modules/swiper/modules/effect-cards/effect-cards.js");
 /**
- * Swiper 8.2.6
+ * Swiper 8.3.0
  * Most modern mobile touch slider and framework with hardware accelerated transitions
  * https://swiperjs.com
  *
@@ -24905,7 +24954,7 @@ __webpack_require__.r(__webpack_exports__);
  *
  * Released under the MIT License
  *
- * Released on: June 29, 2022
+ * Released on: July 6, 2022
  */
 
 

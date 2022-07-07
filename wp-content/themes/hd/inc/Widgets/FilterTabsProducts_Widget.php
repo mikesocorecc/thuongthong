@@ -67,7 +67,7 @@ if ( ! class_exists( 'FilterTabsProducts_Widget' ) ) {
                                 $term = get_term( $term_id );
                             ?>
                             <li class="tabs-inner">
-                                <a data-tab="<?=$term_id?>" aria-label="<?php echo esc_attr($term->name); ?>" class="tab-title" href="#<?php echo $i . '_' . $term_id; ?>"><?php echo $term->name; ?></a>
+                                <a data-tab="<?=$term_id?>" aria-label="<?php echo esc_attr($term->name); ?>" class="tab-title" href="#<?php echo $all_id . '_' . $term_id; ?>"><?php echo $term->name; ?></a>
                             </li>
                             <?php endforeach; ?>
                         </ul>
@@ -77,7 +77,7 @@ if ( ! class_exists( 'FilterTabsProducts_Widget' ) ) {
                             <?php
                             $r = query_by_terms(null, 'product_cat', 'product', $ACF->include_children, $ACF->product_number);
                             if ($r) :
-                                echo '<div class="grid-x grid-tab-products">';
+                                echo '<div class="grid-x grid-tab-products grid-products">';
                                 $i = 0;
 
                                 // Load slides loop
@@ -97,7 +97,7 @@ if ( ! class_exists( 'FilterTabsProducts_Widget' ) ) {
                                 echo '</div>';
                                 if ($ACF->url) :
                             ?>
-                            <a href="<?= get_permalink( wc_get_page_id( 'shop' ) ) ?>" class="button button-arrow" title="<?php echo esc_attr($ACF->button_text) ?>"><?php echo $ACF->button_text; ?></a>
+                            <a href="<?= get_permalink( wc_get_page_id( 'shop' ) ) ?>" class="button view-more" title="<?php echo esc_attr($ACF->button_text) ?>"><?php echo $ACF->button_text; ?></a>
                             <?php endif; endif; ?>
                         </div>
                         <?php
@@ -105,9 +105,9 @@ if ( ! class_exists( 'FilterTabsProducts_Widget' ) ) {
                             $term = get_term( $term_id );
                             $r = query_by_terms($term_id, 'product_cat', 'product', $ACF->include_children, $ACF->product_number);
                         ?>
-                        <div class="tabs-panel" id="<?php echo $i . '_' . $term_id; ?>" aria-labelledby="<?php echo esc_attr($term->name); ?>">
+                        <div class="tabs-panel" id="<?php echo $all_id . '_' . $term_id; ?>" aria-labelledby="<?php echo esc_attr($term->name); ?>">
                             <?php
-                            if ($r) : echo '<div class="grid-x grid-tab-products">';
+                            if ($r) : echo '<div class="grid-x grid-tab-products grid-products">';
                                 $i = 0;
 
                                 // Load slides loop
@@ -127,7 +127,7 @@ if ( ! class_exists( 'FilterTabsProducts_Widget' ) ) {
                                 echo '</div>';
                                 if ($ACF->url) :
                                 ?>
-                                <a href="<?= get_term_link($term, 'product_cat') ?>" class="button button-arrow" title="<?php echo esc_attr($ACF->button_text) ?>"><?php echo $ACF->button_text; ?></a>
+                                <a href="<?= get_term_link($term, 'product_cat') ?>" class="view-more button" title="<?php echo esc_attr($ACF->button_text) ?>"><?php echo $ACF->button_text; ?></a>
                             <?php
                                 endif;
                             endif;

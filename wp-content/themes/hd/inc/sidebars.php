@@ -34,7 +34,7 @@ if ( ! function_exists( '__register_sidebars' ) ) {
 				'id'            => 'w-topheader-left-sidebar',
 				'name'          => __( 'Top-left Header', 'hd' ),
 				'description'   => __( 'Widgets added here will appear in top-left header.', 'hd' ),
-				'before_widget' => '<div class="header-widgets left %2$s">',
+				'before_widget' => '<div class="header-widgets %2$s">',
 				'after_widget'  => '</div>',
 				'before_title'  => '<span>',
 				'after_title'   => '</span>',
@@ -46,7 +46,7 @@ if ( ! function_exists( '__register_sidebars' ) ) {
                 'id'            => 'w-topheader-right-sidebar',
                 'name'          => __( 'Top-right Header', 'hd' ),
                 'description'   => __( 'Widgets added here will appear in top-right header.', 'hd' ),
-                'before_widget' => '<div class="header-widgets right %2$s">',
+                'before_widget' => '<div class="header-widgets %2$s">',
                 'after_widget'  => '</div>',
                 'before_title'  => '<span>',
                 'after_title'   => '</span>',
@@ -91,6 +91,33 @@ if ( ! function_exists( '__register_sidebars' ) ) {
                 'after_widget'  => '</div>',
                 'before_title'  => '<span>',
                 'after_title'   => '</span>',
+            ]
+        );
+
+        register_sidebar(
+            [
+                'container'     => false,
+                'id'            => 'w-extra-sidebar',
+                'name'          => __( 'Extra Footer', 'hd' ),
+                'description'   => __( 'Widgets added here will appear in extra footer.', 'hd' ),
+                'before_widget' => '<div class="widget %2$s">',
+                'after_widget'  => '</div>',
+                'before_title'  => '<span>',
+                'after_title'   => '</span>',
+            ]
+        );
+
+        // product sidebar
+        register_sidebar(
+            [
+                'container'     => false,
+                'id'            => 'w-product-sidebar',
+                'name'        => __('Product Sidebar', 'hd'),
+                'description' => __('Widgets added here will appear in product sidebar.', 'hd'),
+                'before_widget' => '<aside class="sidebar %2$s">',
+                'after_widget'  => '</aside>',
+                'before_title'  => '<h6 class="sidebar-title">',
+                'after_title'   => '</h6>',
             ]
         );
 

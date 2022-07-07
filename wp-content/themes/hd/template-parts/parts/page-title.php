@@ -24,6 +24,9 @@ if (is_search()) {
 ?>
 <section class="section section-title<?= $_class ?>" tabindex="-1">
 	<div class="title-bg parallax-bg" data-parallax="{&quot;y&quot;: 50}"></div>
+    <div class="grid-container title-inner">
+        <h1 class="title h3"><?php echo $title; ?></h1>
+    </div>
     <div class="breadcrumbs-container">
         <div class="grid-container">
         <?php
@@ -36,8 +39,5 @@ if (is_search()) {
         endif;
         ?>
         </div>
-    </div>
-    <div class="grid-container title-inner">
-        <h1 class="title h3"><?php echo $title; ?></h1>
     </div>
 </section>

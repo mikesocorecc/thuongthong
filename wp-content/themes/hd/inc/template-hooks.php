@@ -18,6 +18,9 @@ use Webhd\Themes\SVG_Icons;
 add_action('wp_head', '__critical_inline_css', 1);
 add_action('wp_head', '__extra_header', 10);
 
+/**
+ * @return void
+ */
 function __critical_inline_css()
 {
     $inline_css = "";
@@ -26,6 +29,9 @@ function __critical_inline_css()
     endif;
 }
 
+/**
+ * @return void
+ */
 function __extra_header()
 {
     //echo '<link rel="preconnect" href="https://fonts.gstatic.com">';
@@ -48,11 +54,7 @@ function __extra_header()
 
 // wp_footer
 add_action('wp_footer', '__extra_footer', 99);
-
-function __extra_footer()
-{
-    //...
-}
+function __extra_footer() {}
 
 // -------------------------------------------------------------
 // off_canvas
@@ -60,9 +62,11 @@ function __extra_footer()
 
 add_action('off_canvas', '__off_canvas_button', 10);
 
+/**
+ * @return void
+ */
 function __off_canvas_button()
 {
-
     // mobile navigation
     $position = get_theme_mod_ssl('offcanvas_menu_setting');
     if (!in_array($position, ['left', 'right', 'top', 'bottom'])) {
@@ -79,6 +83,9 @@ function __off_canvas_button()
 // before_header actions
 add_action('before_header', '__before_header_extra', 14);
 
+/**
+ * @return void
+ */
 function __before_header_extra()
 {
     if (function_exists('wp_body_open')) {
@@ -101,6 +108,9 @@ function __before_header_extra()
 add_action('header', '__topheader', 10);
 add_action('header', '__header', 10);
 
+/**
+ * @return void
+ */
 function __topheader()
 {
     $topheader_left = is_active_sidebar('w-topheader-left-sidebar');
@@ -108,14 +118,18 @@ function __topheader()
     if ($topheader_left || $topheader_right) :
 
     ?>
-    <div class="top-header">
+    <div class="top-header" id="top-header">
         <div class="grid-container width-extra">
             <?php
             if ($topheader_left) :
+                echo '<div class="left top-header-inner">';
                 dynamic_sidebar('w-topheader-left-sidebar');
+                echo '</div>';
             endif;
             if ($topheader_right) :
+                echo '<div class="right top-header-inner">';
                 dynamic_sidebar('w-topheader-right-sidebar');
+                echo '</div>';
             endif;
             ?>
         </div>
@@ -125,53 +139,38 @@ function __topheader()
 }
 
 // ----------------------------
-
+/**
+ * @return void
+ */
 function __header() {
+
     $header_sidebar = is_active_sidebar('w-header-sidebar');
     ?>
-    <div class="inside-header" id="inside-header">
-        <div class="grid-container width-extra">
-            <div class="header-inner">
-                <div class="left">
-                    <?php if ( $icon_logo = site_logo('icon')) : ?>
-                    <div class="icon-logo"><?=$icon_logo?></div>
-                    <?php endif; ?>
-                    <?php get_template_part('template-parts/header/primary-menu'); ?>
-                </div>
-                <div class="site-logo">
-                    <?php site_title_or_logo(); ?>
-                </div>
-                <div class="right">
-
-                    <?php if ($header_sidebar) : ?>
-                    <div class="widget-group">
-                        <?php dynamic_sidebar('w-header-sidebar'); ?>
-                    </div>
-                    <?php endif; ?>
-                </div>
-            </div>
-        </div>
-
-
-
-        <div class="grid-container">
-            <div class="site-logo">
-                <?php site_title_or_logo(); ?>
-            </div>
-            <div class="datetime-inner"></div>
-        </div>
-    </div>
     <div data-sticky-container>
-        <div class="navigation-header" data-sticky data-options="marginTop:0;" data-top-anchor="inside-header:bottom">
-            <div class="grid-container">
-                <div class="site-navigation">
-                    <?php get_template_part('template-parts/header/primary-menu'); ?>
+        <div class="inside-header" id="inside-header" data-sticky data-options="marginTop:0;" data-top-anchor="top-header:bottom">
+            <div class="grid-container width-extra">
+                <div class="header-inner">
+                    <div class="left">
+                        <?php if ( $icon_logo = site_logo('icon')) : ?>
+                        <div class="icon-logo"><?=$icon_logo?></div>
+                        <?php endif; ?>
+                        <?php get_template_part('template-parts/header/primary-menu'); ?>
+                    </div>
+                    <div class="site-logo">
+                        <?php site_title_or_logo(); ?>
+                    </div>
+                    <div class="right">
+                        <?php if (has_nav_menu('second-nav')) : ?>
+                        <nav id="second-nav" class="navigation" role="navigation" aria-label="<?php echo esc_attr__('Second Navigation', 'hd'); ?>">
+                            <?php echo second_nav(); ?>
+                        </nav>
+                        <?php endif; if ($header_sidebar) : ?>
+                        <div class="widget-group">
+                            <?php dynamic_sidebar('w-header-sidebar'); ?>
+                        </div>
+                        <?php endif; ?>
+                    </div>
                 </div>
-                <?php if ($header_sidebar) : ?>
-                <div class="widget-group">
-                    <?php dynamic_sidebar('w-header-sidebar'); ?>
-                </div>
-                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -186,29 +185,16 @@ function __header() {
 add_action('footer', '__footer_widgets', 10);
 add_action('footer', '__footer_credit', 11);
 
+/**
+ * @return void
+ */
 function __footer_widgets() {
     $rows    = Cast::toInt(get_theme_mod_ssl('footer_row_setting'));
     $regions = Cast::toInt(get_theme_mod_ssl('footer_col_setting'));
 
-?>
+    ?>
     <footer id="colophon" class="footer-widgets" role="contentinfo">
-        <?php if ($site_logo = site_logo()) : ?>
-            <div class="grid-container">
-                <div class="site-logo">
-                    <?php
-                    echo $site_logo;
-                    $logo_title1 = get_theme_mod_ssl('logo_title1_setting');
-                    $logo_title2 = get_theme_mod_ssl('logo_title2_setting');
-                    if ($logo_title1 || $logo_title2) :
-                        echo '<div class="logo-title">';
-                        echo $logo_title1 ? '<span class="txt1 h6">' . $logo_title1 . '</span>' : null;
-                        echo $logo_title2 ? '<span class="txt2 h3">' . $logo_title2 . '</span>' : null;
-                        echo '</div>';
-                    endif;
-                    ?>
-                </div>
-            </div>
-            <?php endif;
+        <?php
         for ($row = 1; $row <= $rows; $row++) :
 
             // Defines the number of active columns in this footer row.
@@ -221,8 +207,8 @@ function __footer_widgets() {
 
             if (isset($columns)) :
             ?>
-                <div class="grid-container row-<?php echo $row; ?>">
-                    <div class="grid-x grid-padding-x">
+                <div class="grid-container width-extra row-<?php echo $row; ?>">
+                    <div class="grid-x">
                         <?php
                         for ($column = 1; $column <= $columns; $column++) :
                             $footer_n = $column + $regions * ($row - 1);
@@ -248,15 +234,29 @@ function __footer_widgets() {
 
 // ----------------------------
 
-function __footer_credit() { ?>
+/**
+ * @return void
+ */
+function __footer_credit() {
+    ?>
     <footer class="footer-credit">
-        <div class="grid-container">
-            <div class="align-middle grid-x grid-padding-x align-center">
-                <div class="cell medium-shrink copyright">
+        <div class="grid-container width-extra">
+            <div class="align-middle grid-x grid-padding-x align-justify">
+                <?php if (has_nav_menu('policy-nav')) : ?>
+                <div class="cell nav">
+                    <?php echo term_nav(); ?>
+                </div>
+                <?php endif; ?>
+                <?php if (is_active_sidebar('w-extra-sidebar')) : ?>
+                <div class="cell extra">
+                    <?php dynamic_sidebar('w-extra-sidebar'); ?>
+                </div>
+                <?php endif; ?>
+                <div class="cell copyright">
                     <div class="copyright-inner">
                         <p>
                             <span class="cr">&copy;&nbsp;<?= date('Y') ?>&nbsp;<?= get_bloginfo('name') ?>, All rights reserved.</span>
-                            <span class="hd">&nbsp;<?php echo sprintf('<a class="_blank font-0" href="https://webhd.vn/thiet-ke-website/" title="%1$s">%1$s</a><span class="font-0">&nbsp;%2$s&nbsp;</span><a class="_blank" href="https://webhd.vn/" title="%3$s">%3$s</a>', __('Thiết kế web', 'hd'), __('by', 'hd'), __('Webhd Agency', 'hd')) ?></span>
+                            <span class="hd">&nbsp;<?php echo sprintf('<a class="_blank hide" href="https://webhd.vn/thiet-ke-website/" title="%1$s">%1$s</a><span class="hide">&nbsp;%2$s&nbsp;</span><a class="_blank" href="https://webhd.vn/" title="%3$s">%3$s</a>', __('Thiết kế web', 'hd'), __('by', 'hd'), __('Webhd Agency', 'hd')) ?></span>
                         </p>
                         <?php
                         $GPKD = get_theme_mod_ssl('GPKD_setting');
@@ -265,11 +265,6 @@ function __footer_credit() { ?>
                         ?>
                     </div>
                 </div>
-                <?php if (has_nav_menu('policy-nav')) : ?>
-                    <div class="cell medium-shrink nav">
-                        <?php echo term_nav(); ?>
-                    </div>
-                <?php endif; ?>
             </div>
         </div>
     </footer>
@@ -284,9 +279,13 @@ function __footer_credit() { ?>
 add_action('before_footer', '__before_fixed_extra', 31);
 add_action('before_footer', '__before_footer_extra', 32);
 
-function __before_fixed_extra() {
+/**
+ * @return void
+ */
+function __before_fixed_extra()
+{
     if (is_active_sidebar('w-fixedfooter-sidebar')) {
-        echo '<div class="fixedfooter-section">';
+        echo '<div class="fixedfooter-section draggable">';
         dynamic_sidebar('w-fixedfooter-sidebar');
         echo '</div>';
     }
@@ -294,7 +293,11 @@ function __before_fixed_extra() {
 
 //---------------------------------------
 
-function __before_footer_extra() {
+/**
+ * @return void
+ */
+function __before_footer_extra()
+{
     if (is_active_sidebar('w-topfooter-sidebar')) {
         dynamic_sidebar('w-topfooter-sidebar');
     }
@@ -353,8 +356,10 @@ add_filter('widget_tag_cloud_args', function (array $args) {
 
 // add class to achor link
 add_filter('nav_menu_link_attributes', function ($atts) {
+
     //$atts['class'] = "nav-link";
     return $atts;
+
 }, 100, 1);
 
 // -------------------------------------------------------------

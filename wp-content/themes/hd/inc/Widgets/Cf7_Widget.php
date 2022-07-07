@@ -48,7 +48,7 @@ if ( ! class_exists( 'Cf7_Widget' ) ) {
 
 			?>
             <section class="section cf7-section <?= $_class ?>">
-                <div class="grid-container width-extra">
+                <?php if ($ACF->wrapper) : ?><div class="grid-container width-extra"><?php endif;?>
                     <div class="title-section">
 					<?php
 					if ( $title ) : ?>
@@ -71,7 +71,7 @@ if ( ! class_exists( 'Cf7_Widget' ) ) {
 						echo do_shortcode( '[contact-form-7 id="' . $form->ID . '" title="' . esc_attr( $form->post_title ) . '"]' );
 					endif;
 					?>
-                </div>
+                <?php if ($ACF->wrapper) : ?></div><?php endif; ?>
             </section>
 			<?php
 		}
