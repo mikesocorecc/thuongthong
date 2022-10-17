@@ -55,7 +55,7 @@ class PLL_Import_Uploader {
 	 * @since 2.7
 	 *
 	 * @param string[] $file Reference to a single element contained in $_FILE superglobal, passed to {@see wp_handle_upload()}.
-	 * @return PLL_Import_File|WP_Error
+	 * @return PLL_Import_File_Interface|WP_Error
 	 */
 	public function load( $file ) {
 		add_filter( 'upload_mimes', array( $this, 'allowed_mimes' ) ); // phpcs:ignore WordPressVIPMinimum.Hooks.RestrictedHooks.upload_mimes
@@ -79,7 +79,11 @@ class PLL_Import_Uploader {
 		}
 
 		$import_file = $file_format->get_import();
-		$import_file->import_from_file( $this->upload['file'] );
+		$result = $import_file->import_from_file( $this->upload['file'] );
+
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
 
 		return $import_file;
 	}
@@ -93,13 +97,9 @@ class PLL_Import_Uploader {
 	 * @return array Modified list of allowed mime types.
 	 */
 	public function allowed_mimes( $mimes ) {
-		return array_merge(
-			$mimes,
-			wp_list_pluck(
-				$this->file_format_factory->get_supported_formats(),
-				'mime_type',
-				'extension'
-			)
-		);
+		foreach ( $this->file_format_factory->get_supported_formats() as $format ) {
+			$mimes = array_merge( $mimes, $format->mime_type );
+		}
+		return $mimes;
 	}
 }

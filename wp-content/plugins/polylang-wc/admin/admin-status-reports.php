@@ -69,6 +69,7 @@ class PLLWC_Admin_Status_Reports {
 		$pages = array();
 		foreach ( $check_pages as $page_name => $values ) {
 			$page_id = get_option( $values['option'] );
+			$page_id = is_numeric( $page_id ) ? (int) $page_id : 0;
 
 			$page_properties = array();
 

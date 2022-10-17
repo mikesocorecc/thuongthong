@@ -10,7 +10,7 @@
  *
  * @since 2.7
  */
-class PLL_PO_Import extends PLL_Import_File {
+class PLL_PO_Import implements PLL_Import_File_Interface {
 
 	/**
 	 * Po object.
@@ -20,7 +20,7 @@ class PLL_PO_Import extends PLL_Import_File {
 	private $po;
 
 	/**
-	 * PLL_Import_File_Interface constructor.
+	 * Constructor.
 	 *
 	 * Creates a PO object from an imported file.
 	 *

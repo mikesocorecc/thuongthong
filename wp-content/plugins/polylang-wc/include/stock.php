@@ -112,8 +112,14 @@ class PLLWC_Stock {
 	 */
 	public function query_for_reserved_stock( $query, $product_id, $exclude_order_id ) {
 		global $wpdb;
+
 		$product_ids = $this->data_store->get_translations( $product_id );
-		return $wpdb->prepare(
+
+		if ( empty( $product_ids ) ) {
+			return $query;
+		}
+
+		return sprintf(
 			"
 			SELECT COALESCE( SUM( stock_table.`stock_quantity` ), 0 ) FROM $wpdb->wc_reserved_stock stock_table
 			LEFT JOIN $wpdb->posts posts ON stock_table.`order_id` = posts.ID
@@ -122,8 +128,8 @@ class PLLWC_Stock {
 			AND stock_table.`product_id` IN ( %s )
 			AND stock_table.`order_id` != %d
 			",
-			implode( ',', $product_ids ),
-			$exclude_order_id
+			implode( ',', array_map( 'intval', $product_ids ) ),
+			(int) $exclude_order_id
 		);
 	}
 }

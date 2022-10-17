@@ -242,20 +242,25 @@ function __footer_credit() {
     <footer class="footer-credit">
         <div class="grid-container width-extra">
             <div class="align-middle grid-x grid-padding-x align-justify">
-                <?php if (has_nav_menu('policy-nav')) : ?>
-                <div class="cell nav">
-                    <?php echo term_nav(); ?>
+                <div class="cell left">
+                    <div class="copy">
+                        <span class="cr">&copy;&nbsp;<?= date('Y') ?>&nbsp;<?= get_bloginfo('name') ?></span>
+                    </div>
+                    <?php if (has_nav_menu('policy-nav')) : ?>
+                        <div class="nav">
+                            <?php echo term_nav(); ?>
+                        </div>
+                    <?php endif; ?>
                 </div>
-                <?php endif; ?>
                 <?php if (is_active_sidebar('w-extra-sidebar')) : ?>
                 <div class="cell extra">
                     <?php dynamic_sidebar('w-extra-sidebar'); ?>
                 </div>
                 <?php endif; ?>
-                <div class="cell copyright">
+                <div class="cell right copyright">
                     <div class="copyright-inner">
                         <p>
-                            <span class="cr">&copy;&nbsp;<?= date('Y') ?>&nbsp;<?= get_bloginfo('name') ?>, All rights reserved.</span>
+                            <span class="cr">All rights reserved.</span>
                             <span class="hd">&nbsp;<?php echo sprintf('<a class="_blank hide" href="https://webhd.vn/thiet-ke-website/" title="%1$s">%1$s</a><span class="hide">&nbsp;%2$s&nbsp;</span><a class="_blank" href="https://webhd.vn/" title="%3$s">%3$s</a>', __('Thiết kế web', 'hd'), __('by', 'hd'), __('Webhd Agency', 'hd')) ?></span>
                         </p>
                         <?php
@@ -343,7 +348,7 @@ add_filter('walker_nav_menu_start_el', function ($item_output, $item, $depth, $a
  *
  * @return array
  */
-add_filter('widget_tag_cloud_args', function (array $args) {
+add_filter('widget_tag_cloud_args', function ($args) {
     $args['smallest'] = '10';
     $args['largest']  = '19';
     $args['unit']     = 'px';

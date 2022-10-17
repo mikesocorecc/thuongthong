@@ -121,6 +121,20 @@ if ( ! function_exists( '__register_sidebars' ) ) {
             ]
         );
 
+        // shop sidebar
+        register_sidebar(
+            [
+                'container'     => false,
+                'id'            => 'w-shop-sidebar',
+                'name'        => __('Shop Sidebar', 'hd'),
+                'description' => __('Widgets added here will appear in shop sidebar.', 'hd'),
+                'before_widget' => '<div class="%2$s">',
+                'after_widget'  => '</div>',
+                'before_title'  => '<span>',
+                'after_title'   => '</span>',
+            ]
+        );
+
 		// footer columns
 		$footer_args = [];
 

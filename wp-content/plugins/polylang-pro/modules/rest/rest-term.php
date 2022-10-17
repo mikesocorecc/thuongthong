@@ -21,15 +21,11 @@ class PLL_REST_Term extends PLL_REST_Translated_Object {
 	public function __construct( &$rest_api, $content_types ) {
 		parent::__construct( $rest_api, $content_types );
 
-		$this->type = 'term';
-		$this->id   = 'term_id';
+		$this->type           = 'term';
+		$this->setter_id_name = 'term_id';
 
 		add_filter( 'get_terms_args', array( $this, 'get_terms_args' ) );
-
-		foreach ( array_keys( $content_types ) as $taxonomy ) {
-			add_filter( "rest_pre_insert_{$taxonomy}", array( $this, 'pre_insert_term' ), 10, 2 );
-		}
-
+		add_filter( 'pre_term_slug', array( $this, 'pre_term_slug' ), 5, 2 );
 	}
 
 	/**
@@ -42,8 +38,8 @@ class PLL_REST_Term extends PLL_REST_Translated_Object {
 	 */
 	public function get_terms_args( $args ) {
 		// The first test is necessary to avoid an infinite loop when calling get_languages_list().
-		if ( $this->model->is_translated_taxonomy( $args['taxonomy'] ) && isset( $this->params['lang'] ) && in_array( $this->params['lang'], $this->model->get_languages_list( array( 'fields' => 'slug' ) ) ) ) {
-			$args['lang'] = $this->params['lang'];
+		if ( $this->model->is_translated_taxonomy( $args['taxonomy'] ) && isset( $this->request['lang'] ) && in_array( $this->request['lang'], $this->model->get_languages_list( array( 'fields' => 'slug' ) ) ) ) {
+			$args['lang'] = $this->request['lang'];
 		}
 		return $args;
 	}
@@ -65,38 +61,57 @@ class PLL_REST_Term extends PLL_REST_Translated_Object {
 	 * Creates the term slug in case the term already exists in another language
 	 * to allow it to share the same slugs as terms in other languages.
 	 *
-	 * @since 2.3
+	 * @since 3.2
 	 *
-	 * @param WP_Term         $prepared_term Term object.
-	 * @param WP_REST_Request $request       Request object.
-	 * @return WP_Term
+	 * @param string $slug     The inputed slug of the term being saved, may be empty.
+	 * @param string $taxonomy The term taxonomy.
+	 * @return string
 	 */
-	public function pre_insert_term( $prepared_term, $request ) {
-		$params = $request->get_params();
+	public function pre_term_slug( $slug, $taxonomy ) {
+		if ( ! isset( $this->request ) || ! $this->model->is_translated_taxonomy( $taxonomy ) ) {
+			return $slug;
+		}
 
-		if ( ! empty( $params['lang'] ) ) {
-			$lang = $params['lang'];
-		} elseif ( ! empty( $params['id'] ) && $language = $this->model->term->get_language( $params['id'] ) ) { // Update.
+		$attributes = $this->request->get_attributes();
+		$callback   = $attributes['callback'];
+
+		if ( ! is_array( $callback ) ) {
+			return $slug;
+		}
+
+		$controller = $callback[0];
+		if ( ! $controller instanceof WP_REST_Controller ) {
+			return $slug;
+		}
+
+		$schema = $controller->get_item_schema();
+
+		if ( $schema['title'] !== $this->get_rest_field_type( $taxonomy ) ) {
+			return $slug;
+		}
+
+		if ( ! empty( $this->request['lang'] ) ) {
+			$lang = $this->request['lang'];
+		} elseif ( ! empty( $this->request['id'] ) && $language = $this->model->term->get_language( $this->request['id'] ) ) { // Update.
 			$lang = $language->slug;
 		}
 
 		if ( ! empty( $lang ) ) {
-			$taxonomy = substr( current_filter(), 16 );
-			$parent = isset( $prepared_term->parent ) ? $prepared_term->parent : 0;
+			$parent = isset( $this->request['parent'] ) ? $this->request['parent'] : 0;
 
-			if ( empty( $params['slug'] ) && empty( $params['id'] ) && ! empty( $params['name'] ) ) {
+			if ( empty( $this->request['slug'] ) && empty( $this->request['id'] ) && ! empty( $this->request['name'] ) ) {
 				// The term is created without specifying the slug.
-				$slug = $params['name'];
-			} elseif ( ! empty( $params['slug'] ) && false === strpos( '___', $params['slug'] ) ) {
+				$slug = $this->request['name'];
+			} elseif ( ! empty( $this->request['slug'] ) && false === strpos( '___', $this->request['slug'] ) ) {
 				// The term is created or updated and the slug is specified.
-				$slug = $params['slug'];
+				$slug = $this->request['slug'];
 			}
 
 			if ( ! empty( $slug ) && ! $this->model->term_exists_by_slug( $slug, $lang, $taxonomy, $parent ) ) {
-				$prepared_term->slug = sanitize_title( $slug . '___' . $lang );
+				$slug = sanitize_title( $slug . '___' . $lang );
 			}
 		}
 
-		return $prepared_term;
+		return $slug;
 	}
 }

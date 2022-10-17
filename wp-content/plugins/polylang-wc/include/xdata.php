@@ -18,6 +18,10 @@ class PLLWC_Xdata {
 		add_filter( 'pll_get_xdata', array( $this, 'get_xdata' ) );
 		add_action( 'pll_set_xdata', array( $this, 'set_xdata' ) );
 		add_filter( 'pll_xdata_session_manager', array( $this, 'get_session_manager' ) );
+
+		if ( 3 === PLL()->options['force_lang'] ) {
+			add_filter( 'woocommerce_set_cookie_options', array( $this, 'set_cookie_options' ), 10, 2 ); // Since WC 6.7.
+		}
 	}
 
 	/**
@@ -88,5 +92,40 @@ class PLLWC_Xdata {
 	 */
 	public function get_session_manager() {
 		return 'PLLWC_Xdata_Session_Manager';
+	}
+
+	/**
+	 * Allows crossdomain cookies.
+	 *
+	 * Requires WC 6.7+, PHP 7.3+ and SSL as the cookie must be secure.
+	 *
+	 * @since 1.7
+	 *
+	 * @param array  $options Cookie options.
+	 * @param string $name    Cookie name.
+	 * @return array
+	 */
+	public function set_cookie_options( $options, $name ) {
+		$cookies = array(
+			'wp_woocommerce_session_' . COOKIEHASH,
+			'woocommerce_cart_hash',
+			'woocommerce_items_in_cart',
+			'woocommerce_recently_viewed',
+		);
+
+		/**
+		 * Filters whether we allow crossdomain cookies.
+		 *
+		 * @since 1.7
+		 *
+		 * @param bool   $allow True if we allow crossdomain cookies, false otherwise.
+		 * @param string $name  Cookie name.
+		 */
+		if ( is_ssl() && in_array( $name, $cookies, true ) && apply_filters( 'pllwc_allow_cookie_xdata', true, $name ) ) {
+			$options['secure']   = true;
+			$options['samesite'] = 'None';
+		}
+
+		return $options;
 	}
 }

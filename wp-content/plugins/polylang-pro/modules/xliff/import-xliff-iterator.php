@@ -24,7 +24,7 @@ class PLL_Import_Xliff_Iterator implements RecursiveIterator {
 	 *
 	 * @var int.
 	 */
-	private $offset;
+	private $offset = 0;
 
 	/**
 	 * PLL_Import_Xliff_Iterator constructor.
@@ -44,6 +44,7 @@ class PLL_Import_Xliff_Iterator implements RecursiveIterator {
 	 *
 	 * @return int|void offset.
 	 */
+	#[\ReturnTypeWillChange]
 	public function rewind() {
 		$this->offset = 0;
 		return $this->offset;
@@ -56,6 +57,7 @@ class PLL_Import_Xliff_Iterator implements RecursiveIterator {
 	 *
 	 * @return DOMNode|mixed|null
 	 */
+	#[\ReturnTypeWillChange]
 	public function current() {
 		return $this->nodes->item( $this->offset );
 	}
@@ -67,6 +69,7 @@ class PLL_Import_Xliff_Iterator implements RecursiveIterator {
 	 *
 	 * @return mixed|string
 	 */
+	#[\ReturnTypeWillChange]
 	public function key() {
 		return $this->current()->nodeName;
 	}
@@ -78,6 +81,7 @@ class PLL_Import_Xliff_Iterator implements RecursiveIterator {
 	 *
 	 * @return int|void
 	 */
+	#[\ReturnTypeWillChange]
 	public function next() {
 		return $this->offset++;
 	}
@@ -89,6 +93,7 @@ class PLL_Import_Xliff_Iterator implements RecursiveIterator {
 	 *
 	 * @return bool
 	 */
+	#[\ReturnTypeWillChange]
 	public function valid() {
 		return $this->offset < $this->nodes->length;
 	}
@@ -100,6 +105,7 @@ class PLL_Import_Xliff_Iterator implements RecursiveIterator {
 	 *
 	 * @return bool
 	 */
+	#[\ReturnTypeWillChange]
 	public function hasChildren() {
 		return isset( $this->current()->childNodes->length ) && $this->current()->childNodes->length > 0;
 	}
@@ -111,6 +117,7 @@ class PLL_Import_Xliff_Iterator implements RecursiveIterator {
 	 *
 	 * @return RecursiveIterator
 	 */
+	#[\ReturnTypeWillChange]
 	public function getChildren() {
 		return new self( $this->current()->childNodes );
 	}

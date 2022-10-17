@@ -204,6 +204,8 @@ class PLL_Sync_Post_Model {
 			$columns[] = 'post_status';
 		}
 
+		is_sticky( $post_id ) ? stick_post( $tr_id ) : unstick_post( $tr_id );
+
 		/**
 		 * Filters the post fields to synchronize when synchronizing posts
 		 *

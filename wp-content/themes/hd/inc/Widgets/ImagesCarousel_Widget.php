@@ -51,7 +51,7 @@ if (!class_exists('ImagesCarousel_Widget')) {
             if ($ACF->banner_cat) {
                 $term = get_term_by('id', $ACF->banner_cat, 'banner_cat');
                 if ($term) {
-                    $slides_query = query_by_term($term, 'banner');
+                    $slides_query = query_by_term($term, 'banner', false, 0, 0, ['menu_order' => 'DESC']);
                 }
             }
 
@@ -152,7 +152,7 @@ if (!class_exists('ImagesCarousel_Widget')) {
                             ?>
                             <div class="swiper-slide">
                                 <article class="item">
-                                    <div class="overlay">
+                                    <div class="overlay after-overlay">
                                         <picture>
                                             <?php if ($ACF_banner->responsive_image) : ?>
                                             <source media="(max-width: 639.98px)" srcset="<?= attachment_image_src($ACF_banner->responsive_image, 'medium') ?>">
@@ -173,7 +173,7 @@ if (!class_exists('ImagesCarousel_Widget')) {
                                                 <h6 class="sub-title"><?= $ACF_banner->sub_title ?></h6>
                                                 <?php endif; ?>
                                                 <?php if (Str::stripSpace($ACF_banner->html_title)) : ?>
-                                                <h2 class="html-title h1 f-light"><?= $ACF_banner->html_title ?></h2>
+                                                <h2 class="html-title h1 f-regular"><?= $ACF_banner->html_title ?></h2>
                                                 <?php endif; ?>
                                                 <?php if (Str::stripSpace($ACF_banner->html_desc)) : ?>
                                                 <div class="html-desc"><?= $ACF_banner->html_desc ?></div>

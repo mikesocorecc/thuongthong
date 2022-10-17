@@ -48,6 +48,13 @@ class PLL_Sync_Content {
 	public $language;
 
 	/**
+	 * Language of the source post.
+	 *
+	 * @var PLL_Language
+	 */
+	public $from_language;
+
+	/**
 	 * Constructor
 	 *
 	 * @since 1.9
@@ -153,8 +160,7 @@ class PLL_Sync_Content {
 	 * @return WP_Post|void
 	 */
 	public function copy_content( $from_post, $post, $language ) {
-		global $shortcode_tags;
-
+		$this->from_language = $this->model->post->get_language( $from_post->ID );
 		$this->post_id  = $post->ID;
 		$this->language = $this->model->get_language( $language );
 
@@ -162,25 +168,10 @@ class PLL_Sync_Content {
 			return;
 		}
 
-		// Hack shortcodes
-		$backup = $shortcode_tags;
-		$shortcode_tags = array();
-
-		// Add our own shorcode actions
-		if ( $this->options['media_support'] ) {
-			add_shortcode( 'gallery', array( $this, 'ids_list_shortcode' ) );
-			add_shortcode( 'playlist', array( $this, 'ids_list_shortcode' ) );
-			add_shortcode( 'caption', array( $this, 'caption_shortcode' ) );
-			add_shortcode( 'wp_caption', array( $this, 'caption_shortcode' ) );
-		}
-
 		$post->post_title   = $from_post->post_title;
 		$post->post_name    = wp_unique_post_slug( $from_post->post_name, $post->ID, $post->post_status, $post->post_type, $post->post_parent );
 		$post->post_excerpt = $this->translate_content( $from_post->post_excerpt );
 		$post->post_content = $this->translate_content( $from_post->post_content );
-
-		// Get the shorcodes back
-		$shortcode_tags = $backup;
 
 		return $post;
 	}
@@ -291,27 +282,35 @@ class PLL_Sync_Content {
 	 * @return string
 	 */
 	public function translate_html( $content ) {
-		$textarr = wp_html_split( $content ); // Since 4.2.3
-
 		if ( $this->options['media_support'] ) {
-			$tr_id = false;
+			$textarr = wp_html_split( $content ); // Since 4.2.3
+
+			$img_ids = array();
 			foreach ( $textarr as $i => $text ) {
 				// Translate img class and alternative text
 				if ( 0 === strpos( $text, '<img' ) ) {
-					$tr_id = $this->translate_img( $textarr[ $i ] );
-
-					// Translate <figcaption> if any
-					if ( $tr_id && isset( $textarr[ $i + 2 ] ) && '<figcaption>' === $textarr[ $i + 2 ] ) {
-						$tr_post = get_post( $tr_id );
-						if ( ! empty( $tr_post->post_excerpt ) ) {
-							$textarr[ $i + 3 ] = $tr_post->post_excerpt;
-						}
-					}
+					$img_ids[] = $this->translate_img( $textarr[ $i ] );
 				}
 			}
+
+			$new_content = implode( $textarr );
+			$key = 0;
+			return preg_replace_callback(
+				'@(?<before><figcaption.*?>)(.+?)(?<after></figcaption>)@',
+				function ( $matches ) use ( $img_ids, &$key ) {
+					$tr_post = get_post( $img_ids[ $key ] );
+					$key++;
+					if ( ! empty( $tr_post->post_excerpt ) ) {
+						return $matches['before'] . $tr_post->post_excerpt . $matches['after'];
+					} else {
+						return $matches[0];
+					}
+				},
+				$new_content
+			);
 		}
 
-		return implode( $textarr );
+		return $content;
 	}
 
 	/**
@@ -323,14 +322,31 @@ class PLL_Sync_Content {
 	 * @return string Translated text
 	 */
 	public function translate_content( $content ) {
+		global $shortcode_tags;
+
+		// Hack shortcodes.
+		$backup = $shortcode_tags;
+		$shortcode_tags = array();
+
+		// Add our own shorcode actions.
+		if ( $this->options['media_support'] ) {
+			add_shortcode( 'gallery', array( $this, 'ids_list_shortcode' ) );
+			add_shortcode( 'playlist', array( $this, 'ids_list_shortcode' ) );
+			add_shortcode( 'caption', array( $this, 'caption_shortcode' ) );
+			add_shortcode( 'wp_caption', array( $this, 'caption_shortcode' ) );
+		}
+
 		if ( has_blocks( $content ) ) {
 			$blocks  = parse_blocks( $content );
 			$blocks  = $this->translate_blocks( $blocks );
 			$content = serialize_blocks( $blocks );
 		} else {
-			$content = do_shortcode( $content ); // Translate shortcodes
+			$content = do_shortcode( $content ); // Translate shortcodes.
 			$content = $this->translate_html( $content );
 		}
+
+		// Get the shorcodes back.
+		$shortcode_tags = $backup;
 
 		return $content;
 	}
@@ -401,8 +417,41 @@ class PLL_Sync_Content {
 					break;
 
 				case 'core/latest-posts':
-					if ( isset( $block['attrs']['categories'] ) && $tr_id = $this->model->term->get( $block['attrs']['categories'], $this->language ) ) {
-						$blocks[ $k ]['attrs']['categories'] = $tr_id;
+					if ( isset( $block['attrs']['categories'] ) ) {
+						$tr_ids = array();
+						foreach ( $block['attrs']['categories'] as $term ) {
+							$tr_ids[] = $this->model->term->get( $term['id'], $this->language );
+						}
+
+						// Let's remove unfound translation results.
+						$tr_ids = array_filter( $tr_ids );
+
+						// If there is no translation, then the category is unset.
+						if ( empty( $tr_ids ) ) {
+							unset( $blocks[ $k ]['attrs']['categories'] );
+							break;
+						}
+
+						// Query all the translated terms outside the loop to avoid multiple SQL queries with get_term() call.
+						$terms = get_terms( array( 'include' => $tr_ids, 'hide_empty' => false, 'fields' => 'id=>name' ) );
+
+						if ( ! is_array( $terms ) ) {
+							unset( $blocks[ $k ]['attrs']['categories'] );
+							break;
+						}
+
+						$tr_data = array();
+						foreach ( $terms as $id => $term_name ) {
+							$tr_data[] = array(
+								'id'    => $id,
+								'value' => $term_name,
+							);
+						}
+						if ( $tr_data ) {
+							$blocks[ $k ]['attrs']['categories'] = $tr_data;
+						} else {
+							unset( $blocks[ $k ]['attrs']['categories'] );
+						}
 					} else {
 						unset( $blocks[ $k ]['attrs']['categories'] );
 					}
@@ -413,12 +462,12 @@ class PLL_Sync_Content {
 				switch ( $block['blockName'] ) {
 					case 'core/audio':
 					case 'core/video':
-					case 'core/cover':
 						if ( array_key_exists( 'id', $blocks[ $k ]['attrs'] ) ) {
 							$blocks[ $k ]['attrs']['id'] = $this->translate_media( $block['attrs']['id'] );
 						}
 						break;
 
+					case 'core/cover':
 					case 'core/image':
 						if ( array_key_exists( 'id', $blocks[ $k ]['attrs'] ) ) {
 							$blocks[ $k ]['attrs']['id'] = $this->translate_media( $block['attrs']['id'] );
@@ -444,7 +493,8 @@ class PLL_Sync_Content {
 						break;
 
 					case 'core/gallery':
-						if ( is_array( $block['attrs']['ids'] ) ) {
+						if ( isset( $block['attrs']['ids'] ) && is_array( $block['attrs']['ids'] ) ) {
+							// Backward compatibility with WP < 5.9.
 							foreach ( $block['attrs']['ids'] as $n => $id ) {
 								$blocks[ $k ]['attrs']['ids'][ $n ] = $this->translate_media( $id );
 							}
@@ -480,10 +530,11 @@ class PLL_Sync_Content {
 		 *
 		 * @since 2.5.3
 		 *
-		 * @param array  $blocks List of blocks
-		 * @param string $lang   Language of target
+		 * @param array  $blocks    List of blocks
+		 * @param string $lang      Language of target
+		 * @param string $from_lang Language of the source
 		 */
-		return apply_filters( 'pll_translate_blocks', $blocks, $this->language->slug );
+		return apply_filters( 'pll_translate_blocks', $blocks, $this->language->slug, $this->from_language->slug );
 	}
 
 	/**

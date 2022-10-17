@@ -17,7 +17,7 @@ abstract class PLL_File_Format {
 	public $extension;
 
 	/**
-	 * @var string
+	 * @var string[]
 	 */
 	public $mime_type;
 
@@ -35,7 +35,7 @@ abstract class PLL_File_Format {
 	 *
 	 * @since 3.1
 	 *
-	 * @return PLL_Import_File
+	 * @return PLL_Import_File_Interface
 	 */
 	abstract public function get_import();
 
@@ -44,7 +44,7 @@ abstract class PLL_File_Format {
 	 *
 	 * @since 3.1
 	 *
-	 * @return PLL_Export_File
+	 * @return PLL_Export_File_Interface
 	 */
 	abstract public function get_export();
 }

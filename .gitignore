@@ -152,3 +152,6 @@ fabric.properties
 /wp-content/plugins/woocommerce/packages/woocommerce-blocks/assets/js/types/type-defs/contexts.js
 /wp-content/plugins/woocommerce/packages/woocommerce-blocks/assets/js/types/type-defs/hooks.js
 /wp-content/plugins/woocommerce/packages/woocommerce-blocks/assets/js/types/type-defs/shipping.js
+/mix-manifest.json
+/node_modules/
+/yarn.lock

@@ -23,6 +23,12 @@ Fancybox.bind(".fcy-video, .fcy-popup", {});
 //     YTdeferred.resolve(window.YT);
 // };
 
+//require("jquery.marquee");
+
+/* oas*/
+import AOS from 'aos';
+AOS.init();
+
 /** jquery load */
 $(() => {
 
@@ -46,45 +52,16 @@ $(() => {
         });
     });
 
-    /**qty*/
-    $('.input-number-increment').on('click', function (e) {
-        e.preventDefault();
-        let $input = $(this).parents('.input-number-group').find('.qty');
-        let val = parseInt($input.val(), 10);
-        $input.val(val + 1);
-
-        let update_cart = $('button[name="update_cart"]');
-        if (update_cart.length > 0) {
-            update_cart.prop('disabled', false)
-        }
-    });
-    $('.input-number-decrement').on('click', function (e) {
-        e.preventDefault();
-        let $input = $(this).parents('.input-number-group').find('.qty');
-        let val = parseInt($input.val(), 10);
-        if (val > 1) {
-            $input.val(val - 1);
-
-            let update_cart = $('button[name="update_cart"]');
-            if (update_cart.length > 0) {
-                update_cart.prop('disabled', false)
-            }
-        }
-    });
-
     /** */
     let _desc_inner = $('.product-cat-desc-inner');
     if (_desc_inner.length > 0) {
         let _height = _desc_inner.outerHeight(false);
         if (_height > 500) {
             _desc_inner.css({'max-height': '500px'});
-            let _viewmore_html = '<div class="viewmore-wrapper">\n' +
-                                    '<a class="btn-viewmore" title="Xem thêm" data-src="#desc-inner" data-modal="true" href="javascript:;" data-glyph-after="">Xem thêm</a>\n' +
-                                 '</div>';
-
+            let _viewmore_html = '<div class="viewmore-wrapper"><a class="btn-viewmore" title="Xem thêm" data-src="#desc-inner" data-modal="true" href="javascript:;" data-glyph-after="">Xem thêm</a></div>';
             _desc_inner.append(_viewmore_html);
 
-            /** */
+            //...
             Fancybox.bind("#desc-inner .btn-viewmore", {});
         }
     }
@@ -101,12 +78,13 @@ $(() => {
         }
     });
 
-    /**tabs + cookie*/
+    /** tabs + cookie*/
     const _tabs_wrapper = $(".w-filter-tabs");
     _tabs_wrapper.each((index, el) => {
         const _rand = nanoid(6);
         $(el).addClass(_rand);
 
+        //...
         const _tabs = $(el).find(".filter-tabs");
         const _tabs_content = $(el).find(".filter-tabs-content");
         _tabs_content.find('.tabs-panel').hide();
@@ -124,31 +102,84 @@ $(() => {
             $(this.hash).fadeIn();
             $(this).addClass("current");
         }).filter(".current").trigger('click');
+
+        //...
+        let check_current = _tabs.find('a.current');
+        if (check_current.length > 0) {}
+        else {
+            _tabs.find('a:first').addClass("current").trigger('click');
+        }
     });
 
     /** toggle menu */
     const _toggle_menu = $(".toggle_menu");
     _toggle_menu.find("li.is-active.has-submenu-toggle").find(".submenu-toggle").trigger('click');
 
+    /** qty */
+    const _qty_controls = () => {
+
+        /**qty*/
+        $('.input-number-increment').off('click').on('click', function (e) {
+            e.preventDefault();
+            let $input = $(this).parents('.input-number-group').find('.qty');
+            let val = parseInt($input.val(), 10);
+            $input.val(val + 1);
+
+            let update_cart = $('button[name="update_cart"]');
+            if (update_cart.length > 0) {
+                update_cart.prop('disabled', false)
+            }
+        });
+        $('.input-number-decrement').off('click').on('click', function (e) {
+            e.preventDefault();
+            let $input = $(this).parents('.input-number-group').find('.qty');
+            let val = parseInt($input.val(), 10);
+            if (val > 1) {
+                $input.val(val - 1);
+
+                let update_cart = $('button[name="update_cart"]');
+                if (update_cart.length > 0) {
+                    update_cart.prop('disabled', false)
+                }
+            }
+        });
+    }
+
+    // run
+    _qty_controls();
+
+    /** ajaxComplete */
+    $( document ).ajaxComplete(function( event, xhr, settings ) {
+        _qty_controls();
+    });
+
     /** */
     const onload_events = () => {
 
         /** */
         const videos_gallery = $('section.videos-gallery');
-        let target_height = videos_gallery.find('.video-wrapper').find('.item-first').outerHeight(false);
+        let gal_target_height = videos_gallery.find('.video-wrapper').find('.item-first').outerHeight(false);
 
         let _port_size = getViewportSize(window);
         if (device.desktop() || _port_size.w >= 782) {
             videos_gallery.find('.video-wrapper').find('.item-list>ul').css({
-                'max-height': target_height + 'px',
+                'max-height': gal_target_height + 'px',
                 'height': 'auto',
             });
         }
+
+        /** */
+        const woocommerce_product_gallery = $('.woocommerce-product-gallery');
+        let woo_target_height = woocommerce_product_gallery.find('.flex-viewport').outerHeight(false);
+        woocommerce_product_gallery.find('.flex-control-thumbs').css({
+            'max-height': woo_target_height + 'px',
+            'height': 'auto',
+        });
     }
 
     $(window).on('load', () => { onload_events(); });
 
-    /*Orientation JavaScript Callback*/
+    /** Orientation JavaScript Callback*/
     device.onChangeOrientation(() => { onload_events(); });
 });
 

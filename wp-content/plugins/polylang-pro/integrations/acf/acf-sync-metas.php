@@ -110,19 +110,21 @@ class PLL_ACF_Sync_Metas {
 	 * Recursively constructs the map of translations properties for all metas.
 	 *
 	 * @since 2.7
+	 * @since 3.2 Added the $sync_layout parameter.
 	 *
 	 * @param array  $translations Reference to an array of meta keys.
 	 * @param string $name         Meta key.
 	 * @param array  $value        ACF field value.
 	 * @param array  $field        ACF field.
+	 * @param bool   $sync_layout  Whether the layout field must be synchronized, passsed by reference.
 	 * @return void
 	 */
-	protected function get_translations( &$translations, $name, $value, $field ) {
+	protected function get_translations( &$translations, $name, $value, $field, &$sync_layout = false ) {
 		switch ( $field['type'] ) {
 			case 'group':
 				foreach ( $field['sub_fields'] as $sub_field ) {
 					if ( isset( $value[ $sub_field['name'] ] ) ) {
-						$this->get_translations( $translations, "{$name}_{$sub_field['name']}", $value[ $sub_field['name'] ], $sub_field );
+						$this->get_translations( $translations, "{$name}_{$sub_field['name']}", $value[ $sub_field['name'] ], $sub_field, $sync_layout );
 					}
 				}
 				break;
@@ -132,10 +134,15 @@ class PLL_ACF_Sync_Metas {
 					foreach ( array_keys( $value ) as $row ) {
 						foreach ( $field['sub_fields'] as $sub_field ) {
 							if ( is_array( $value[ $row ] ) && isset( $value[ $row ][ $sub_field['name'] ] ) ) {
-								$this->get_translations( $translations, "{$name}_{$row}_{$sub_field['name']}", $value[ $row ][ $sub_field['name'] ], $sub_field );
+								$this->get_translations( $translations, "{$name}_{$row}_{$sub_field['name']}", $value[ $row ][ $sub_field['name'] ], $sub_field, $sync_layout );
 							}
 						}
 					}
+				}
+
+				// A child field is synchronized or translatable. Let's synchronize the repeater.
+				if ( $sync_layout ) {
+					$translations['sync'][] = $name;
 				}
 				break;
 
@@ -145,17 +152,27 @@ class PLL_ACF_Sync_Metas {
 						foreach ( $field['layouts'] as $layout ) {
 							foreach ( $layout['sub_fields'] as $sub_field ) {
 								if ( is_array( $value[ $row ] ) && isset( $value[ $row ][ $sub_field['name'] ] ) ) {
-									$this->get_translations( $translations, "{$name}_{$row}_{$sub_field['name']}", $value[ $row ][ $sub_field['name'] ], $sub_field );
+									$this->get_translations( $translations, "{$name}_{$row}_{$sub_field['name']}", $value[ $row ][ $sub_field['name'] ], $sub_field, $sync_layout );
 								}
 							}
 						}
 					}
+				}
+
+				// A child field is synchronized or translatable. Let's synchronize the flexible.
+				if ( $sync_layout ) {
+					$translations['sync'][] = $name;
 				}
 				break;
 
 			default:
 				if ( isset( $field['translations'] ) ) {
 					$translations[ $field['translations'] ][] = $name;
+
+					// If a field is synchronize or translatable, then all its parent layout fields must be synchronized.
+					if ( 'sync' === $field['translations'] || 'translate' === $field['translations'] ) {
+						$sync_layout = true;
+					}
 				}
 				break;
 		}

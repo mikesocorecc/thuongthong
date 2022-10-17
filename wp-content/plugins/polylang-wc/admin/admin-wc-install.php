@@ -13,9 +13,9 @@ class PLLWC_Admin_WC_Install {
 	/**
 	 * List of WooCommerce pages in all languages.
 	 *
-	 * @var string[][][]
+	 * @var array<string, array<string, array<string, string>>>
 	 */
-	private $pages;
+	private $pages = array();
 
 	/**
 	 * Locale used to translate WooCommerce pages title.
@@ -33,21 +33,35 @@ class PLLWC_Admin_WC_Install {
 		// Add post state for translations of the shop, cart, etc...
 		add_filter( 'display_post_states', array( $this, 'display_post_states' ), 10, 2 );
 
+		// Allow WC to install the default pages and their translations through status page.
 		add_filter( 'woocommerce_debug_tools', array( $this, 'debug_tools' ) );
 
-		// Make sure to load only on setup wizard and status page as initializing translated pages is expensive.
-		if ( isset( $_GET['page'] ) && ( 'wc-setup' === $_GET['page'] || 'wc-status' === $_GET['page'] ) ) {  // phpcs:ignore WordPress.Security.NonceVerification
+		// Make sure to load only on setup wizard as initializing translated pages is expensive.
+		if ( isset( $_GET['page'], $_GET['path'] ) && 'wc-admin' === $_GET['page'] && '/setup-wizard' === $_GET['path'] ) { // phpcs:ignore WordPress.Security.NonceVerification
 			$this->init_translated_pages();
 
 			if ( ! empty( $this->pages ) ) {
-				foreach ( array_keys( reset( $this->pages ) ) as $key ) {
-					add_action( 'update_option_woocommerce_' . $key . '_page_id', array( $this, 'create_page' ) );
-				}
+				add_action( 'init', array( $this, 'translate_default_wc_pages' ) ); // $wp_rewrite is not available yet and is required when wp_unique_post_slug() is called, so we need to wait for init.
 			}
 		}
 
 		// Add default product category when adding a new language.
 		add_action( 'pll_add_language', array( $this, 'add_language' ) );
+	}
+
+	/**
+	 * Translates the default WooCommerce pages in all existing languages.
+	 *
+	 * @since 1.7
+	 *
+	 * @return void
+	 */
+	public function translate_default_wc_pages() {
+		foreach ( pll_languages_list() as $lang ) {
+			foreach ( array_keys( $this->pages[ $lang ] ) as $key ) {
+				$this->translate_page( $key, $lang );
+			}
+		}
 	}
 
 	/**
@@ -137,6 +151,7 @@ class PLLWC_Admin_WC_Install {
 	public function init_translated_pages() {
 		add_filter( 'plugin_locale', array( $this, 'plugin_locale' ), 10, 2 );
 
+		/** @var PLL_Language $language */
 		foreach ( pll_languages_list( array( 'fields' => '' ) ) as $language ) {
 			// Load our text domain in the new language.
 			$this->locale = $language->locale;
@@ -175,24 +190,9 @@ class PLLWC_Admin_WC_Install {
 		}
 
 		// Reloads the current text domain.
-		remove_filter( 'plugin_locale', array( $this, 'plugin_locale' ), 10, 2 );
+		remove_filter( 'plugin_locale', array( $this, 'plugin_locale' ) );
 		unload_textdomain( 'polylang-wc' );
 		load_plugin_textdomain( 'polylang-wc' );
-	}
-
-	/**
-	 * Translates WooCommerce default pages when they are created by WooCommerce,
-	 * generally in the WooCommerce setup wizard.
-	 *
-	 * @since 0.1
-	 *
-	 * @return void
-	 */
-	public function create_page() {
-		$key = substr( current_action(), 26, -8 );
-		foreach ( pll_languages_list() as $lang ) {
-			$this->translate_page( $key, $lang );
-		}
 	}
 
 	/**
@@ -206,6 +206,8 @@ class PLLWC_Admin_WC_Install {
 		// Let WooCommerce create the pages in the default language.
 		WC_Install::create_pages();
 
+		$this->init_translated_pages();
+
 		$default_language = pll_default_language();
 
 		// In case pages were installed before Polylang, the pages may have no language. We must assign one.
@@ -217,26 +219,28 @@ class PLLWC_Admin_WC_Install {
 		}
 
 		// Then translate them.
-		foreach ( pll_languages_list() as $lang ) {
-			foreach ( array_keys( $this->pages[ $lang ] ) as $key ) {
-				$this->translate_page( $key, $lang );
-			}
-		}
+		$this->translate_default_wc_pages();
 
 		return __( 'All missing WooCommerce pages successfully installed', 'polylang-wc' );
 	}
 
 	/**
-	 * Create a page translation.
+	 * Creates a page translation.
 	 *
 	 * @since 0.1
 	 *
-	 * @param string $id   WooCommerce page id.
+	 * @param string $page WooCommerce Page slug.
 	 * @param string $lang Language slug.
 	 * @return void
 	 */
-	public function translate_page( $id, $lang ) {
-		$post_id = wc_get_page_id( $id );
+	public function translate_page( $page, $lang ) {
+		$post_id = wc_get_page_id( $page );
+
+		if ( $post_id < 0 ) {
+			// The given page doesn't exist.
+			return;
+		}
+
 		$translations = pll_get_post_translations( $post_id );
 
 		// Create the translation only if it doesn't exist yet.
@@ -244,7 +248,7 @@ class PLLWC_Admin_WC_Install {
 			$post = get_post( $post_id, ARRAY_A );
 			unset( $post['ID'] );
 			// FIXME post parent?
-			$post['post_title'] = $this->pages[ $lang ][ $id ]['title'];
+			$post['post_title'] = $this->pages[ $lang ][ $page ]['title'];
 			$post['post_status'] = 'draft'; // Keep it draft before we set the language, to correctly handle auto added pages to menu.
 			$tr_id = wp_insert_post( $post );
 
@@ -261,7 +265,7 @@ class PLLWC_Admin_WC_Install {
 				 * and attempt to share the slug if needed ( to do after the language has been set ).
 				 */
 				if ( ! empty( $tr_post ) ) {
-					$tr_post->post_name = $this->pages[ $lang ][ $id ]['name'];
+					$tr_post->post_name = $this->pages[ $lang ][ $page ]['name'];
 					$tr_post->post_status = 'publish';
 					wp_update_post( $tr_post );
 				}

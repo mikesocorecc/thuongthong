@@ -18,6 +18,7 @@
 
 defined('ABSPATH') || exit;
 
+// header
 get_header('shop');
 
 $term = get_queried_object();
@@ -39,6 +40,10 @@ the_page_title_theme();
  * @see WC_Structured_Data::generate_website_data() - 30
  */
 do_action('woocommerce_before_main_content');
+
+if (is_shop() && is_active_sidebar('w-shop-sidebar')) :
+    wc_get_template_part('shop', 'product');
+else :
 
 ?>
 <section class="section archive-products">
@@ -105,13 +110,14 @@ do_action('woocommerce_before_main_content');
             </div>
         </div>
     </div>
-    <?php
-    /**
-     * Hook: woocommerce_after_main_content.
-     *
-     */
-    do_action('woocommerce_after_main_content');
-    ?>
 </section>
-<?php
+<?php endif;
+
+/**
+ * Hook: woocommerce_after_main_content.
+ *
+ */
+do_action('woocommerce_after_main_content');
+
+//... footer
 get_footer('shop');

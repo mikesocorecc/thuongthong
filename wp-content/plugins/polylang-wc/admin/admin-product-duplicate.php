@@ -39,7 +39,7 @@ class PLLWC_Admin_Product_Duplicate {
 	 * @return void
 	 */
 	public function duplicate_product_action() {
-		remove_action( 'set_object_terms', array( PLL()->posts, 'set_object_terms' ), 10, 4 );
+		remove_action( 'set_object_terms', array( PLL()->posts, 'set_object_terms' ) );
 	}
 
 	/**

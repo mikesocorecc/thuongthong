@@ -34,8 +34,6 @@ class PLL_Import_Action {
 	private $model;
 
 	/**
-	 * Instance of PLL_Import_File_Interface.
-	 *
 	 * @var PLL_Import_Uploader
 	 */
 	private $import_factory;
@@ -105,10 +103,6 @@ class PLL_Import_Action {
 				return $updated;
 			}
 
-			if ( 0 === $updated ) {
-				return new WP_Error( 'pll_import_no_translations', esc_html__( 'Error: No translations have been imported.', 'polylang-pro' ) );
-			}
-
 			add_settings_error(
 				'import-action',
 				'settings_updated',
@@ -131,7 +125,7 @@ class PLL_Import_Action {
 	 *
 	 * @since 2.7
 	 *
-	 * @param PLL_Import_File $import Import file.
+	 * @param PLL_Import_File_Interface $import Import file.
 	 * @return bool|WP_Error
 	 */
 	public function is_data_valid_for_import( $import ) {
@@ -152,6 +146,21 @@ class PLL_Import_Action {
 	}
 
 	/**
+	 * Remove the context for the translation entries.
+	 *
+	 * @since 3.2
+	 *
+	 * @param  array $translations Array containing the entries.
+	 * @return array               The same entries with an empty context.
+	 */
+	private function remove_context_from_translations( $translations ) {
+		foreach ( $translations as $translation_entry ) {
+			$translation_entry->context = '';
+		}
+		return $translations;
+	}
+
+	/**
 	 * Handles the strings translations saving in the database.
 	 *
 	 * @since 2.7
@@ -167,6 +176,13 @@ class PLL_Import_Action {
 		$errors = array();
 		$strings = '';
 
+		// Clone the $pll_mo element to avoid modifying the original one since we will then update it.
+		$pll_mo_clone = clone $pll_mo;
+
+		// Remove the context for the translation entries to generate the same key between the translation strings
+		// and the database strings.
+		$translations->entries = $this->remove_context_from_translations( $translations->entries );
+
 		foreach ( $translations->entries as $entry ) {
 			if ( empty( $entry->translations ) ) {
 				$entry->translations[0] = '';
@@ -176,8 +192,18 @@ class PLL_Import_Action {
 			$sanitized_translation = apply_filters( 'pll_sanitize_string_translation', $entry->translations[0], $entry->extracted_comments, $entry->context );
 			$security_check = wp_kses_post( $sanitized_translation );
 			if ( $security_check === $sanitized_translation ) {
-				$pll_mo->add_entry( $pll_mo->make_entry( $entry->singular, $sanitized_translation ) );
-				$updated++;
+
+				// Set a unique key for each entry to compare the original and translated strings.
+				$key = $entry->key();
+
+				// Check if there is already an original string existing before comparison.
+				if ( isset( $pll_mo_clone->entries[ $key ]->translations[0] ) ) {
+					// Check that the string has been edited before updating.
+					if ( $pll_mo_clone->entries[ $key ]->translations[0] !== $sanitized_translation ) {
+						$pll_mo->add_entry( $pll_mo->make_entry( $entry->singular, $sanitized_translation ) );
+						$updated ++;
+					}
+				}
 			} else {
 				$errors[] = $entry->singular;
 			}

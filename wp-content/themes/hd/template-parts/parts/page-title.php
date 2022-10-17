@@ -9,10 +9,12 @@ if ($breadcrumb_bg) {
 }
 
 $is_single = false;
-$object = get_queried_object();
-if (!$title = $object->name) {
-	$title = $object->post_title;
-	$is_single = true;
+$object = get_queried_object();  //dump($object);
+if (is_shop()) {
+    $title = $object->label;
+} else if (!$title = $object->name) {
+    $title = $object->post_title;
+    $is_single = true;
 }
 
 unset($term);

@@ -137,8 +137,8 @@ class PLLWC_Admin_Taxonomies {
 	 * @return mixed
 	 */
 	public function translate_meta( $value, $key, $lang ) {
-		if ( 'thumbnail_id' === $key ) {
-			$tr_value = pll_get_post( $value, $lang );
+		if ( 'thumbnail_id' === $key && is_numeric( $value ) && ! empty( $value ) ) {
+			$tr_value = pll_get_post( (int) $value, $lang );
 			$value = $tr_value ? $tr_value : $value;
 		}
 		return $value;
@@ -156,6 +156,7 @@ class PLLWC_Admin_Taxonomies {
 	 */
 	public function saved_product_cat( $term_id ) {
 		$thumbnail_id = get_term_meta( $term_id, 'thumbnail_id', true );
+		$thumbnail_id = is_numeric( $thumbnail_id ) ? (int) $thumbnail_id : 0;
 
 		$lang = pll_get_term_language( $term_id );
 
@@ -201,17 +202,14 @@ class PLLWC_Admin_Taxonomies {
 	 * @return void
 	 */
 	public function add_category_fields() {
-		/** @var WC_Admin_Taxonomies */
-		$wc_admin_tax = pll_get_anonymous_object_from_filter( 'product_cat_edit_form_fields', array( 'WC_Admin_Taxonomies', 'edit_category_fields' ), 10 );
-
 		if ( isset( $_GET['taxonomy'], $_GET['from_tag'], $_GET['new_lang'] ) ) {  // phpcs:ignore WordPress.Security.NonceVerification
 			$term = get_term( (int) $_GET['from_tag'], 'product_cat' );  // phpcs:ignore WordPress.Security.NonceVerification
 		}
 
 		if ( ! empty( $term ) ) {
-			$wc_admin_tax->edit_category_fields( $term );
+			WC_Admin_Taxonomies::get_instance()->edit_category_fields( $term );
 		} else {
-			$wc_admin_tax->add_category_fields();
+			WC_Admin_Taxonomies::get_instance()->add_category_fields();
 		}
 	}
 

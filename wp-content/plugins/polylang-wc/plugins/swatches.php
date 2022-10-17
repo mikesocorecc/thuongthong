@@ -105,34 +105,40 @@ class PLLWC_Swatches {
 	 * @return mixed
 	 */
 	public function translate_product_meta( $value, $key, $lang, $from ) {
-		if ( '_swatch_type_options' === $key && $product = wc_get_product( $from ) ) {
-			$attr_terms = array();
-			$data_store = PLLWC_Data_Store::load( 'product_language' );
-			$orig_lang  = $data_store->get_language( $from );
-			$attributes = $product->get_variation_attributes();
+		if ( '_swatch_type_options' !== $key ) {
+			return $value;
+		}
+		$product = wc_get_product( $from );
+		if ( ! $product instanceof WC_Product_Variable ) {
+			return $value;
+		}
 
-			foreach ( $attributes as $tax => $terms ) {
-				foreach ( $terms as $slug ) {
-					$attr_terms[ md5( $slug ) ] = array(
-						'taxonomy' => $tax,
-						'slug'     => $slug,
-					);
-				}
+		$attr_terms = array();
+		$data_store = PLLWC_Data_Store::load( 'product_language' );
+		$orig_lang  = $data_store->get_language( $from );
+		$attributes = $product->get_variation_attributes();
+
+		foreach ( $attributes as $tax => $terms ) {
+			foreach ( $terms as $slug ) {
+				$attr_terms[ md5( $slug ) ] = array(
+					'taxonomy' => $tax,
+					'slug'     => $slug,
+				);
 			}
+		}
 
-			foreach ( $value as $i => $option ) {
-				foreach ( $option['attributes'] as $k => $attr ) {
-					if ( PLL()->options['media_support'] && $tr_id = pll_get_post( $attr['image'], $lang ) ) {
-						$attr['image'] = $tr_id;
-					}
-
-					$terms = get_terms( $attr_terms[ $k ]['taxonomy'], array( 'slug' => $attr_terms[ $k ]['slug'], 'lang' => $orig_lang ) );
-					$term = reset( $terms );
-					$tr_term = get_term( pll_get_term( $term->term_id, $lang ) );
-					$tr_k = md5( $tr_term->slug );
-					unset( $value[ $i ]['attributes'][ $k ] );
-					$value[ $i ]['attributes'][ $tr_k ] = $attr;
+		foreach ( $value as $i => $option ) {
+			foreach ( $option['attributes'] as $k => $attr ) {
+				if ( PLL()->options['media_support'] && $tr_id = pll_get_post( $attr['image'], $lang ) ) {
+					$attr['image'] = $tr_id;
 				}
+
+				$terms = get_terms( $attr_terms[ $k ]['taxonomy'], array( 'slug' => $attr_terms[ $k ]['slug'], 'lang' => $orig_lang ) );
+				$term = reset( $terms );
+				$tr_term = get_term( pll_get_term( $term->term_id, $lang ) );
+				$tr_k = md5( $tr_term->slug );
+				unset( $value[ $i ]['attributes'][ $k ] );
+				$value[ $i ]['attributes'][ $tr_k ] = $attr;
 			}
 		}
 

@@ -5,8 +5,8 @@ Requires PHP: 7.0
 Requires at least: 5.5
 Tested up to: 6.0
 WC requires at least: 5.5
-WC tested up to: 6.6
-Stable tag: trunk
+WC tested up to: 6.9
+Stable tag: 2.0.11
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -492,7 +492,7 @@ We provide exclusive technical support to our customers. Our plugin has plenty o
 <li><a target="_blank" href="https://wordpress.org/plugins/woo-cart-redirect-to-checkout-page">Add to Cart Redirect for WooCommerce</a></li>
 </ul>
 <ul>
-<li><a target="_blank" href="https://wordpress.org/plugins/woo-2checkout">Payment Gateway – 2Checkout for WooCommerce</a></li>
+<li><a target="_blank" href="https://wordpress.org/plugins/leo-product-recommendations">WooCommerce Related Product Popup</a></li>
 </ul>
 </blockquote>
 
@@ -529,7 +529,6 @@ We provide exclusive technical support to our customers. Our plugin has plenty o
 </ul>
 
 </blockquote>
-
 
 == Installation ==
 
@@ -616,6 +615,49 @@ And your are ready to go.
 12. Global Variation Color Swatches Attribute List Preview
 
 == Changelog ==
+
+= 2.0.11 - 28-09-2022 =
+
+* Update: WooCommerce Support
+
+= 2.0.10 - 15-09-2022 =
+
+* Update: WooCommerce Support
+* Update: JS Scripts
+* Fix: WPML Option issue
+
+= 2.0.9 - 28-08-2022 =
+
+* Update: Translation String
+* Update: Settings Script and RTL
+
+= 2.0.8 - 17-08-2022 =
+
+* Fix: Caching header issue
+
+= 2.0.7 - 11-08-2022 =
+
+* Update: Woocommerce 6.8 support
+* Add: Caching header for ajax response
+
+= 2.0.6 - 31-07-2022 =
+
+* Fix: dependency script updated for product page settings save issue
+* Update: `is_admin()` check removed for some theme support
+
+= 2.0.5 - 20-07-2022 =
+
+* Add: `woo_variation_swatches_html` filter to modify swatches output
+* Add: `woo_variation_swatches_nav_widget_html` filter to modify widget output
+* Update: `[wvs_show_archive_variation]` shortcode updated, now `product_id` can be added like: `[wvs_show_archive_variation product_id="ID"]`.
+* Update: `data-dependency` attribute to `data-gwp_dependency` for possible conflict.
+* Update: translation string.
+
+= 2.0.4 - 08-07-2022 =
+
+* Fix: Composite Product Selecting Issue
+* Add: Option to change tick and cross icon color
+* Add: Option to enable/disable preloader
 
 = 2.0.3 - 26-06-2022 =
 

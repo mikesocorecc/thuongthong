@@ -8,7 +8,7 @@
 \defined( '\WPINC' ) || die;
 
 /**
- * thumbnail (380x0)
+ * thumbnail (480x0)
  * medium (768x0)
  * large (1024x0)
  *

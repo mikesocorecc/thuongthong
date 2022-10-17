@@ -1,15 +1,10 @@
 /*!
- * Variation Swatches for WooCommerce 
- * 
- * Author: Emran Ahmed ( emran.bd.08@gmail.com ) 
- * Date: 6/26/2022, 5:23:57 PM
+ * Variation Swatches for WooCommerce
+ *
+ * Author: Emran Ahmed ( emran.bd.08@gmail.com )
+ * Date: 9/29/2022, 5:01:11 PM
  * Released under the GPLv3 license.
  */
-:root {
-  --wvs-cross: url('data:image/svg+xml;utf8,%3Csvg filter="drop-shadow(0px 0px 5px rgb(255 255 255 / .6))" xmlns="http://www.w3.org/2000/svg" width="72px" height="72px" viewBox="0 0 24 24"%3E%3Cpath fill="none" stroke="%23ff0000" stroke-linecap="round" stroke-width="0.6" d="M5 5L19 19M19 5L5 19"/%3E%3C/svg%3E');
-  --wvs-tick: url('data:image/svg+xml;utf8,%3Csvg filter="drop-shadow(0px 0px 2px rgb(0 0 0 / .8))" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 30 30"%3E%3Cpath fill="none" stroke="%23ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M4 16L11 23 27 7"/%3E%3C/svg%3E');
-}
-
 .woo-variation-swatches.wvs-tooltip .radio-variable-item[data-wvstooltip] {
   position: relative;
 }
@@ -531,7 +526,8 @@
   -webkit-box-pack: start;
       -ms-flex-pack: start;
           justify-content: flex-start;
-  margin: 0 5px;
+  /*margin: 0 5px;*/
+  margin: 0;
   padding: 0;
   list-style: none;
 }
@@ -663,12 +659,9 @@
   display: none !important;
 }
 .woo-variation-swatches .variable-items-wrapper .variable-item img {
-  margin: 0;
-  /** Storefront FIX */
-  padding: 0;
-  /** ShopIsle Fix */
-  width: 100%;
-  /** TheGem Fix */
+  margin: 0; /** Storefront FIX */
+  padding: 0; /** ShopIsle Fix */
+  width: 100%; /** TheGem Fix */
   height: 100%;
   pointer-events: none;
 }
@@ -699,7 +692,7 @@
   height: var(--wvs-single-product-item-height, 30px);
 }
 .woo-variation-swatches .variable-items-wrapper .variable-item:not(.radio-variable-item):first-child {
-  margin-left: 0;
+  /*margin-left: 0;*/
 }
 .woo-variation-swatches .variable-items-wrapper .variable-item:not(.radio-variable-item):last-child {
   margin-right: 0;
@@ -807,9 +800,9 @@
   color: #fff;
   padding: 2px;
   border-radius: 2px !important;
-  text-shadow: 0 1px #00000040;
-  -webkit-box-shadow: 0 0 2px #00000061;
-          box-shadow: 0 0 2px #00000061;
+  text-shadow: 0 1px rgba(0, 0, 0, 0.2509803922);
+  -webkit-box-shadow: 0 0 2px rgba(0, 0, 0, 0.3803921569);
+          box-shadow: 0 0 2px rgba(0, 0, 0, 0.3803921569);
 }
 .woo-variation-swatches .variable-items-wrapper .variable-item.wvs-show-stock-left-info:not(.disabled).radio-variable-item .wvs-stock-left-info::after {
   margin-left: 5px;

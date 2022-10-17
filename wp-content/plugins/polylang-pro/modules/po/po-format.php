@@ -17,9 +17,9 @@ class PLL_PO_Format extends PLL_File_Format {
 	public $extension = 'po';
 
 	/**
-	 * @var string
+	 * @var string[]
 	 */
-	public $mime_type = 'text/x-po';
+	public $mime_type = array( 'po' => 'text/x-po' );
 
 	/**
 	 * Po format is always supported.

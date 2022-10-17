@@ -171,45 +171,49 @@ class PLL_Bulk_Translate {
 	 *
 	 * @since 2.7
 	 *
-	 * @param array $request Parameters from the HTTP Request.
+	 * @param array $request {
+	 *   Parameters from the HTTP Request.
 	 *
-	 * @return array
+	 *   @type int[]    $post               The list of post ids to bulk translate. Must be set if `$post` is not.
+	 *   @type int[]    $media              The list of media ids to bulk translate.  Must be set if `$media` is not.
+	 *   @type string   $translate          The translation action ('pll_copy_post' for copy, 'pll_sync_post' for synchronization).
+	 *   @type string[] $pll-translate-lang The list of language slugs to translate to.
+	 * }
+	 * @return array {
+	 *   @type string[] $error              Error messages.
+	 *   @type int[]    $item_ids           The sanitized list of post (or media) ids to translate.
+	 *   @type string   $translate          The sanitized translation action.
+	 *   @type string[] $pll-translate-lang The sanitized list of language slugs to translate to.
+	 * }
 	 */
 	protected function parse_request( $request ) {
+		$args = array( self::ERROR => array() );
+
 		$screens_content_keys = array(
 			'upload' => 'media',
-			'edit'    => 'post',
-		);
-		$item_key = $screens_content_keys[ $this->current_screen->base ];
-
-		$filters = array(
-			$item_key            => array(
-				'filter'        => FILTER_VALIDATE_INT,
-				'flags'         => FILTER_REQUIRE_ARRAY,
-				'error_message' => __( 'No item has been selected. Please make sure to select at least one item to be translated.', 'polylang-pro' ),
-			),
-			'translate'          => array(
-				'filter' => FILTER_SANITIZE_STRING,
-			),
-			'pll-translate-lang' => array(
-				'filter'        => FILTER_SANITIZE_STRING,
-				'flags'         => FILTER_REQUIRE_ARRAY,
-				'error_message' => __( 'Error: No target language has been selected. Please make sure to select at least one target language.', 'polylang-pro' ),
-			),
+			'edit'   => 'post',
 		);
 
-		$args = filter_var_array(
-			$request,
-			$filters,
-			true
-		);
-		$args['item_ids'] = $args[ $item_key ];
+		if ( ! empty( $this->current_screen ) && isset( $screens_content_keys[ $this->current_screen->base ] ) ) {
+			$item_key = $screens_content_keys[ $this->current_screen->base ];
 
-		$args[ self::ERROR ] = array();
-		foreach ( $filters as $field_name => $filter_details ) {
-			if ( empty( $args[ $field_name ] ) && array_key_exists( 'error_message', $filter_details ) ) {
-				$args[ self::ERROR ][] = $filter_details['error_message'];
+			if ( isset( $request[ $item_key ] ) && is_array( $request[ $item_key ] ) ) {
+				$args['item_ids'] = array_filter( array_map( 'absint', $request[ $item_key ] ) );
 			}
+		}
+
+		if ( empty( $args['item_ids'] ) ) {
+			$args[ self::ERROR ][] = __( 'No item has been selected. Please make sure to select at least one item to be translated.', 'polylang-pro' );
+		}
+
+		$args['translate'] = sanitize_key( $request['translate'] );
+
+		if ( isset( $request['pll-translate-lang'] ) && is_array( $request['pll-translate-lang'] ) ) {
+			$args['pll-translate-lang'] = array_intersect( $request['pll-translate-lang'], $this->model->get_languages_list( array( 'fields' => 'slug' ) ) );
+		}
+
+		if ( empty( $args['pll-translate-lang'] ) ) {
+			$args[ self::ERROR ][] = __( 'Error: No target language has been selected. Please make sure to select at least one target language.', 'polylang-pro' );
 		}
 
 		return $args;

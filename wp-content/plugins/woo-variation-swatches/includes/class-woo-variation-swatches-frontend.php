@@ -49,9 +49,9 @@
             
             public function get_attribute_taxonomy_by_name( $attribute_name ) {
                 
-                $transient_name = sprintf( 'wvs_attribute_taxonomy_%s', $attribute_name );
+                $cache_name = sprintf( 'wvs_attribute_taxonomy_%s', $attribute_name );
                 
-                $cache = new Woo_Variation_Swatches_Cache( $transient_name, 'wvs_attribute_taxonomy' );
+                $cache = new Woo_Variation_Swatches_Cache( $cache_name, 'wvs_attribute_taxonomy' );
                 
                 if ( isset( $_GET[ 'wvs_clear_transient' ] ) ) {
                     $cache->delete_transient();
@@ -101,7 +101,6 @@
             public function get_dual_color_gradient_angle() {
                 return apply_filters( 'woo_variation_swatches_dual_color_gradient_angle', '-45deg' );
             }
-            
             
             public function is_color_attribute( $attribute ) {
                 if ( ! is_object( $attribute ) ) {
@@ -162,7 +161,6 @@
                 
                 return get_term_meta( $term_id, 'product_attribute_image', true );
             }
-            
             
             public function get_product_children( $product ) {
                 

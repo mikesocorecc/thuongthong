@@ -72,7 +72,7 @@ class PLL_Import_Export {
 				__( 'Export string translations', 'polylang-pro' ),
 				array( $this, 'metabox_export_strings' ),
 				'languages_page_mlang_strings',
-				'bottom'
+				'normal'
 			);
 
 			add_meta_box(
@@ -80,7 +80,7 @@ class PLL_Import_Export {
 				__( 'Import string translations', 'polylang-pro' ),
 				array( $this, 'metabox_import_translation' ),
 				'languages_page_mlang_strings',
-				'bottom'
+				'normal'
 			);
 		}
 	}

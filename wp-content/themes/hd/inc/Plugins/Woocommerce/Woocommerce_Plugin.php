@@ -191,6 +191,10 @@ if ( ! class_exists( 'Woocommerce_Plugin' ) ) {
 			add_theme_support( 'wc-product-gallery-lightbox' );
 			add_theme_support( 'wc-product-gallery-slider' );
 
+            //...
+            remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_excerpt', 20);
+            add_action('woocommerce_single_product_summary', 'woocommerce_template_single_excerpt', 31);
+
 			// Remove default WooCommerce wrappers.
 			remove_action( 'woocommerce_before_main_content', 'woocommerce_output_content_wrapper' );
 			remove_action( 'woocommerce_after_main_content', 'woocommerce_output_content_wrapper_end' );

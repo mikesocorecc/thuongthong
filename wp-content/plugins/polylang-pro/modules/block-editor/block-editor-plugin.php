@@ -25,6 +25,11 @@ class PLL_Block_Editor_Plugin {
 	protected $options;
 
 	/**
+	 * @var PLL_Language|false
+	 */
+	protected $curlang;
+
+	/**
 	 * Constructor
 	 *
 	 * @since 2.6
@@ -32,13 +37,15 @@ class PLL_Block_Editor_Plugin {
 	 * @param PLL_Frontend|PLL_Admin|PLL_Settings|PLL_REST_Request $polylang Polylang object.
 	 */
 	public function __construct( &$polylang ) {
-		$this->model = &$polylang->model;
-		$this->posts = &$polylang->posts;
+		$this->model   = &$polylang->model;
+		$this->posts   = &$polylang->posts;
 		$this->options = &$polylang->options;
+		$this->curlang = &$polylang->curlang;
 
 		new PLL_Block_Editor_Filter_Preload_Paths( array( $this, 'preload_paths_for_post' ), 50, 2 ); // For posts only.
 		new PLL_Block_Editor_Filter_Preload_Paths( array( $this, 'preload_paths' ), 50, 2 ); // For posts and widgets.
 		add_filter( 'navigation_editor_preload_paths', array( $this, 'preload_paths' ), 50 ); // Experimental for Gutenberg.
+		add_filter( 'widget_types_to_hide_from_legacy_widget_block', array( $this, 'filter_legacy_widgets' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 	}
 
@@ -155,8 +162,6 @@ class PLL_Block_Editor_Plugin {
 	 * @return void
 	 */
 	public function admin_enqueue_scripts() {
-		global $post;
-
 		$screen = get_current_screen();
 		if ( empty( $screen ) ) {
 			return;
@@ -203,11 +208,11 @@ class PLL_Block_Editor_Plugin {
 				POLYLANG_VERSION,
 				true
 			);
-			// Set default language according to the context if no language is defined yet
-			$this->posts->set_default_language( $post->ID );
+
+			// Set default language according to the context if no language is defined yet.
 			$pll_settings = 'let pll_block_editor_plugin_settings = ' . wp_json_encode(
 				array(
-					'lang' => $this->model->post->get_language( $post->ID ),
+					'lang' => $this->get_editor_language(),
 				)
 			);
 			wp_add_inline_script( $script_handle, $pll_settings, 'before' );
@@ -266,7 +271,8 @@ class PLL_Block_Editor_Plugin {
 	 */
 	private function enqueue_style_for_specific_screen( $screen, $suffix ) {
 		// Enqueue specific styles for block and widget editor UI
-		if ( $this->is_widget_screen( $screen ) || ( $this->is_translatable_post_screen( $screen ) && $this->is_block_editor( $screen ) ) ) {
+		if ( $this->is_widget_screen( $screen ) || $this->is_widget_customizer_screen( $screen ) ||
+			( $this->is_translatable_post_screen( $screen ) && $this->is_block_editor( $screen ) ) ) {
 			wp_enqueue_style(
 				'polylang-block-widget-editor-css',
 				plugins_url( '/css/build/style' . $suffix . '.css', POLYLANG_ROOT_FILE ),
@@ -277,7 +283,7 @@ class PLL_Block_Editor_Plugin {
 	}
 
 	/**
-	 * Check if we're in the context of a post screen.
+	 * Checks if we're in the context of post or site editor screen.
 	 *
 	 * @since 3.1
 	 *
@@ -285,7 +291,9 @@ class PLL_Block_Editor_Plugin {
 	 * @return bool              True if post screen, false otherwise.
 	 */
 	private function is_translatable_post_screen( $screen ) {
-		return 'post' === $screen->base && $this->model->is_translated_post_type( $screen->post_type );
+		return ( 'post' === $screen->base && $this->model->is_translated_post_type( $screen->post_type ) ) ||
+				( 'site-editor' === $screen->base && $this->model->is_translated_post_type( 'wp_template_part' ) ) ||
+				( 'appearance_page_gutenberg-edit-site' === $screen->base && $this->model->is_translated_post_type( 'wp_template_part' ) );
 	}
 
 	/**
@@ -322,6 +330,59 @@ class PLL_Block_Editor_Plugin {
 	 */
 	private function is_navigation_screen( $screen ) {
 		return 'gutenberg_page_gutenberg-navigation' === $screen->base;
+	}
+
+	/**
+	 * Check if we're in the context of a widget customizer screen.
+	 *
+	 * @since 3.2
+	 *
+	 * @param  WP_Screen $screen The current screen.
+	 * @return bool              True if widget customizer screen, false otherwise.
+	 */
+	private function is_widget_customizer_screen( $screen ) {
+		return 'customize' === $screen->base;
+	}
+
+	/**
+	 * Returns the language to use in the editor.
+	 *
+	 * @since 3.2
+	 *
+	 * @return PLL_Language|null
+	 */
+	private function get_editor_language() {
+		global $post;
+
+		if ( ! empty( $this->curlang ) && PLL_FSE_Tools::is_site_editor() ) {
+			return $this->curlang;
+		}
+
+		if ( ! empty( $post ) && $this->model->is_translated_post_type( $post->post_type ) ) {
+			$this->posts->set_default_language( $post->ID );
+			$post_lang = $this->model->post->get_language( $post->ID );
+			return ! empty( $post_lang ) ? $post_lang : null;
+		}
+
+		return null;
+	}
+
+	/**
+	 * Method that allow legacy widgets in widget block editor previously removed by WP and hide legacy Polylang widget.
+	 *
+	 * @since 3.2
+	 *
+	 * @param array $widget_ids An array of hidden widget ids.
+	 * @return array
+	 */
+	public function filter_legacy_widgets( $widget_ids ) {
+		$widgets_to_show = array( 'custom_html' );
+		$widget_ids = array_diff( $widget_ids, $widgets_to_show );
+
+		$widgets_to_hide = array( 'polylang' );
+		$widget_ids = array_merge( $widget_ids, $widgets_to_hide );
+
+		return $widget_ids;
 	}
 
 }

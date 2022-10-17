@@ -15,7 +15,7 @@ global $post;
 
 ?>
 <section class="section single-post single-page">
-    <div class="grid-container">
+    <div class="grid-container width-extra">
         <div class="col-content">
             <?php echo post_excerpt($post, 'excerpt', true); ?>
             <div class="content clearfix">

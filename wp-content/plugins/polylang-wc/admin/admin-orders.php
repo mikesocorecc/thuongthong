@@ -41,7 +41,7 @@ class PLLWC_Admin_Orders {
 	public function custom_columns() {
 		$class = PLL()->filters_columns;
 		remove_filter( 'manage_edit-shop_order_columns', array( $class, 'add_post_column' ), 100 );
-		remove_action( 'manage_shop_order_posts_custom_column', array( $class, 'post_column' ), 10, 2 );
+		remove_action( 'manage_shop_order_posts_custom_column', array( $class, 'post_column' ) );
 
 		add_filter( 'manage_edit-shop_order_columns', array( $this, 'add_order_column' ), 100 );
 		add_action( 'manage_shop_order_posts_custom_column', array( $this, 'order_column' ), 10, 2 );

@@ -221,7 +221,7 @@ class PLLWC_Import {
 	 *
 	 * @since 0.9
 	 *
-	 * @return PLL_Language
+	 * @return PLL_Language|null
 	 */
 	public function language_for_unique_sku() {
 		return PLL()->pref_lang;
@@ -261,9 +261,11 @@ class PLLWC_Import {
 	 * @return array of arrays with "parent" and "name" keys.
 	 */
 	public function parse_categories_field( $value ) {
-		// Worst hack ever, for shared slug.
-		$_POST['term_lang_choice'] = PLL()->pref_lang->slug;
-		$_REQUEST['_pll_nonce'] = wp_create_nonce( 'pll_language' );
+		if ( ! empty( PLL()->pref_lang ) ) {
+			// Worst hack ever, for shared slug.
+			$_POST['term_lang_choice'] = PLL()->pref_lang->slug;
+			$_REQUEST['_pll_nonce'] = wp_create_nonce( 'pll_language' );
+		}
 
 		return $this->importer->parse_categories_field( $value );
 	}
@@ -278,8 +280,10 @@ class PLLWC_Import {
 	 */
 	public function parse_tags_field( $value ) {
 		// Worst hack ever, for shared slug.
-		$_POST['term_lang_choice'] = PLL()->pref_lang->slug;
-		$_REQUEST['_pll_nonce'] = wp_create_nonce( 'pll_language' );
+		if ( ! empty( PLL()->pref_lang ) ) {
+			$_POST['term_lang_choice'] = PLL()->pref_lang->slug;
+			$_REQUEST['_pll_nonce'] = wp_create_nonce( 'pll_language' );
+		}
 
 		return $this->importer->parse_tags_field( $value );
 	}

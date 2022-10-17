@@ -196,7 +196,7 @@ class PLLWC_Admin_Products {
 	public function remove_sanitize_title() {
 		// Backward compatibility with Polylang < 2.9.
 		$obj = isset( PLL()->filters_sanitization ) ? PLL()->filters_sanitization : PLL()->filters;
-		remove_filter( 'sanitize_title', array( $obj, 'sanitize_title' ), 10, 3 );
+		remove_filter( 'sanitize_title', array( $obj, 'sanitize_title' ) );
 	}
 
 	/**

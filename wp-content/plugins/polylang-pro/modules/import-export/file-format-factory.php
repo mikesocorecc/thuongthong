@@ -61,7 +61,11 @@ class PLL_File_Format_Factory {
 	 * @return PLL_File_Format|WP_Error
 	 */
 	public function from_extension( $extension ) {
-		return $this->from( 'extension', $extension );
+		return $this->get_format(
+			function ( $format ) use ( $extension ) {
+				return $format->extension === $extension;
+			}
+		);
 	}
 
 	/**
@@ -73,31 +77,28 @@ class PLL_File_Format_Factory {
 	 * @return PLL_File_Format|WP_Error
 	 */
 	public function from_mime_type( $mime_type ) {
-		return $this->from( 'mime_type', $mime_type );
+		return $this->get_format(
+			function ( $format ) use ( $mime_type ) {
+				return is_array( $format->mime_type ) && in_array( $mime_type, $format->mime_type, true );
+			}
+		);
 	}
 
 	/**
-	 * Matches a supported format to a given property name and value. Internal use.
+	 * Matches a supported format given a filter callback. Internal use.
 	 *
-	 * @since 3.1
+	 * @since 3.2
 	 *
-	 * @param string $property Property of the {@see PLL_File_Format} class to compare.
-	 * @param string $value    Expected value of the selected property.
+	 * @param callable $filter A function used to search a format among supported formats.
 	 * @return PLL_File_Format|WP_Error
 	 */
-	protected function from( $property, $value ) {
+	protected function get_format( $filter ) {
 		$supported_formats = $this->get_supported_formats();
-		$matching_formats = array_values(
-			array_filter(
-				$supported_formats,
-				function ( $format ) use ( $property, $value ) {
-					return $format->$property === $value;
-				}
-			)
-		);
+
+		$matching_formats = array_filter( $supported_formats, $filter );
 
 		if ( count( $matching_formats ) > 0 ) {
-			return $matching_formats[0];
+			return reset( $matching_formats );
 		}
 
 		$formats = array_map( 'strtoupper', wp_list_pluck( $supported_formats, 'extension' ) );

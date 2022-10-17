@@ -20,6 +20,11 @@ class PLL_REST_API {
 	public $term;
 
 	/**
+	 * @var PLL_FSE_REST_Template|null
+	 */
+	public $template;
+
+	/**
 	 * @var PLL_REST_Comment
 	 */
 	public $comment;
@@ -93,7 +98,7 @@ class PLL_REST_API {
 			'/languages',
 			array(
 				'methods'             => WP_REST_Server::READABLE,
-				'callback'            => array( $this->model, 'get_languages_list' ),
+				'callback'            => array( $this, 'get_languages_list' ),
 				'permission_callback' => '__return_true',
 			)
 		);
@@ -197,5 +202,26 @@ class PLL_REST_API {
 		}
 
 		return $return;
+	}
+
+	/**
+	 * Returns the list of available languages specifying the default language.
+	 *
+	 * @since 3.2
+	 *
+	 * @return array<PLL_Language> List of PLL_Language objects
+	 */
+	public function get_languages_list() {
+		$languages = $this->model->get_languages_list();
+
+		$default_lang_slug = $this->model->options['default_lang'];
+
+		foreach ( $languages as $key => $language ) {
+			$language = get_object_vars( $language ); // get_object_vars() is here to avoid setting a $is_default_lang property without defining it in the PLL_Language class.
+			$language['is_default_lang'] = $default_lang_slug === $language['slug'];
+			$languages[ $key ] = $language;
+		}
+
+		return array_values( $languages );
 	}
 }

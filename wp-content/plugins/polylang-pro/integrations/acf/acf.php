@@ -28,6 +28,11 @@ class PLL_ACF {
 	 * @return void
 	 */
 	public function init() {
+		if ( PLL()->model->is_translated_post_type( 'acf-field-group' ) ) {
+			// Use a non-default priority to avoid changes in cache key due to undesired hooks order change.
+			add_filter( 'acf/get_cache_key', array( $this, 'filter_cache_key' ), 50, 2 );
+		}
+
 		add_filter( 'acf/get_taxonomies', array( $this, 'get_taxonomies' ) );
 
 		add_action( 'add_meta_boxes_acf-field-group', array( $this, 'remove_sync' ) );
@@ -45,6 +50,24 @@ class PLL_ACF {
 
 		$this->sync_metas     = new PLL_ACF_Sync_Metas();
 		$this->auto_translate = new PLL_ACF_Auto_Translate();
+	}
+
+	/**
+	 * Adds the current language in the cache key to make sure that filtered queries
+	 * are not cached for only one language.
+	 *
+	 * @since 3.2
+	 *
+	 * @param string $key      Cache key.
+	 * @param string $original Original unfiltered cache key.
+	 * @return string
+	 */
+	public function filter_cache_key( $key, $original ) {
+		$lang = pll_current_language();
+		if ( $lang && 'acf_get_field_group_posts' === $original ) {
+			$key .= ':lang=' . $lang;
+		}
+		return $key;
 	}
 
 	/**

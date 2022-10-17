@@ -84,7 +84,7 @@ class PLLWC_Admin_Menus {
 		$i = -1;
 		foreach ( $this->get_endpoints() as $key => $title ) {
 			// Don't translate the links when the language filter displays "Show all languages".
-			$page_id = empty( PLL()->curlang ) ? wc_get_page_id( 'myaccount' ) : pll_get_post( wc_get_page_id( 'myaccount' ), PLL()->curlang );
+			$page_id = empty( PLL()->curlang ) ? wc_get_page_id( 'myaccount' ) : pll_get_post( wc_get_page_id( 'myaccount' ), PLL()->curlang->slug );
 
 			if ( $page_id ) {
 				$permalink = get_permalink( $page_id );

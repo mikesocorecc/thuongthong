@@ -9,6 +9,7 @@
 use Webhd\Helpers\Str;
 use Webhd\Helpers\Url;
 use Webhd\Helpers\Cast;
+use Webhd\Helpers\Arr;
 
 use Webhd\Walkers\Horizontal_Menu_Walker;
 use Webhd\Walkers\Vertical_Menu_Walker;
@@ -132,13 +133,14 @@ if ( ! function_exists( 'query_by_term' ) ) {
     /**
      * @param object $term
      * @param string $post_type
-     * @param int $posts_per_page
-     * @param int $paged
-     * @param bool $include_children
+     * @param bool   $include_children
      *
+     * @param int    $posts_per_page
+     * @param int    $paged
+     * @param array  $orderby
      * @return bool|WP_Query
      */
-	function query_by_term($term, $post_type = 'any', bool $include_children = true, int $posts_per_page = 0, int $paged = 0 ) {
+	function query_by_term($term, $post_type = 'any', bool $include_children = true, int $posts_per_page = 0, int $paged = 0, $orderby = [] ) {
         if (!$term || !$post_type) {
             return false;
         }
@@ -157,10 +159,18 @@ if ( ! function_exists( 'query_by_term' ) ) {
             'ignore_sticky_posts' => true,
             'no_found_rows' => true,
             'post_status' => 'publish',
-            'orderby' => ['date' => 'DESC'],
+            //'orderby' => ['date' => 'DESC'],
             'tax_query' => $tax_query,
             'nopaging' => true,
         ];
+
+        if (is_array($orderby)) {
+            $orderby = Arr::removeEmptyValues($orderby);
+        } else {
+            $orderby = ['date' => 'DESC'];
+        }
+
+        $_args['orderby'] = $orderby;
 
         if ($post_type) {
             $_args['post_type'] = $post_type;
@@ -1035,11 +1045,17 @@ if ( ! function_exists( 'the_breadcrumbs' ) ) {
 			echo '<li><a class="home" href="' . Url::home() . '">' . __( 'Home', 'hd' ) . '</a></li>';
 
 			//...
-			if ( is_category() || is_tax() ) {
+            if (is_shop()) {
+                $object = get_queried_object();
+
+                echo $before;
+                echo $object->label;
+                echo $after;
+            }
+            elseif ( is_category() || is_tax() ) {
 
 				$cat_obj = $wp_query->get_queried_object();
 				$thisCat = get_term( $cat_obj->term_id );
-
 				if ( isset( $thisCat->parent ) && 0 != $thisCat->parent ) {
 					$parentCat = get_term( $thisCat->parent );
 

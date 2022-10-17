@@ -7,9 +7,7 @@
 /** import styles bundle */
 @import "~swiper/css/bundle";
 
-// @import '~swiper/css';
-// @import '~swiper/css/navigation';
-// @import '~swiper/css/pagination';
-
-@import "~@fancyapps/ui/dist/fancybox";
+@import "~@fancyapps/ui/src/Fancybox/Fancybox";
 //@import "~@nobleclem/jquery-multiselect/jquery.multiselect.css";
+
+@import '~aos/src/sass/aos';

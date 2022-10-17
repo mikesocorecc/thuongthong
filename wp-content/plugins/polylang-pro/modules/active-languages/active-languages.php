@@ -174,7 +174,7 @@ class PLL_Active_Languages {
 	}
 
 	/**
-	 * Sets error 404 if the requested language is not active
+	 * Sets error 404 if the requested language is not active.
 	 *
 	 * @since 1.9
 	 *
@@ -186,9 +186,12 @@ class PLL_Active_Languages {
 			add_filter( 'wp_sitemaps_enabled', '__return_false' );
 
 			/**
-			 * Fires when a visitor attempts to access to an inactive language
+			 * Fires when a visitor attempts to access to an inactive language.
 			 *
 			 * @since 2.7
+			 *
+			 * @param string       $slug    Requested language code.
+			 * @param PLL_Language $curlang Requested language object.
 			 */
 			do_action( 'pll_inactive_language_requested', $this->curlang->slug, $this->curlang );
 		}
@@ -247,6 +250,6 @@ class PLL_Active_Languages {
 				unset( $languages[ $k ] );
 			}
 		}
-		return $languages;
+		return array_values( $languages );
 	}
 }

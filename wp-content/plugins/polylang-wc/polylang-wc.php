@@ -10,8 +10,8 @@
  * Plugin name:          Polylang for WooCommerce
  * Plugin URI:           https://polylang.pro
  * Description:          Adds multilingual capability to WooCommerce
- * Version:              1.6.3
- * Requires at least:    5.4
+ * Version:              1.7
+ * Requires at least:    5.7
  * Requires PHP:         7.0
  * Author:               WP SYNTEX
  * Author URI:           https://polylang.pro
@@ -20,8 +20,8 @@
  * License:              GPL v3 or later
  * License URI:          https://www.gnu.org/licenses/gpl-3.0.txt
  *
- * WC requires at least: 4.3
- * WC tested up to:      6.1
+ * WC requires at least: 5.1
+ * WC tested up to:      6.8
  *
  * Copyright 2016-2020 Frédéric Demarle
  * Copyright 2020-2022 WP SYNTEX
@@ -44,8 +44,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Don't access directly.
 }
 
-define( 'PLLWC_VERSION', '1.6.3' );
-define( 'PLLWC_MIN_PLL_VERSION', '2.8' );
+define( 'PLLWC_VERSION', '1.7' );
+define( 'PLLWC_MIN_PLL_VERSION', '3.0' );
 
 define( 'PLLWC_FILE', __FILE__ ); // This file.
 define( 'PLLWC_BASENAME', plugin_basename( PLLWC_FILE ) ); // Plugin name as known by WP.
@@ -214,7 +214,7 @@ class Polylang_Woocommerce {
 
 		// WC 3.3: Maybe update default product categories after WooCommerce did it.
 		$db_version = get_option( 'woocommerce_db_version' );
-		if ( ! empty( $db_version ) && version_compare( $db_version, '3.3.0', '<' ) ) {
+		if ( is_string( $db_version ) && version_compare( $db_version, '3.3.0', '<' ) ) {
 			add_action( 'add_option_woocommerce_db_version', array( 'PLLWC_Admin_WC_Install', 'update_330_wc_db_version' ), 10, 2 );
 		}
 
@@ -282,7 +282,7 @@ class Polylang_Woocommerce {
 		}
 
 		if ( PLL() instanceof PLL_Admin_Base ) {
-			//new PLL_License( __FILE__, 'Polylang for WooCommerce', PLLWC_VERSION, 'Frédéric Demarle' );
+			
 			new PLL_T15S( 'polylang-wc', 'https://packages.translationspress.com/wp-syntex/polylang-wc/packages.json' );
 		}
 
@@ -403,7 +403,7 @@ class Polylang_Woocommerce {
 	public function maybe_upgrade() {
 		$options = get_option( 'polylang-wc' );
 
-		if ( version_compare( $options['version'], PLLWC_VERSION, '<' ) ) {
+		if ( is_array( $options ) && version_compare( $options['version'], PLLWC_VERSION, '<' ) ) {
 			// Version 0.4.3.
 			if ( version_compare( $options['version'], '0.4.3', '<' ) ) {
 				delete_transient( 'woocommerce_cache_excluded_uris' );
@@ -443,7 +443,7 @@ class Polylang_Woocommerce {
 		$options = get_option( 'polylang-wc' );
 
 		if ( empty( $options ) ) {
-			$options['version'] = PLLWC_VERSION;
+			$options = array( 'version' => PLLWC_VERSION );
 			update_option( 'polylang-wc', $options );
 		}
 	}

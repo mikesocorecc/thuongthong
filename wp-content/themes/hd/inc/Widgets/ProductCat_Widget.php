@@ -48,7 +48,7 @@ if (!class_exists('ProductCat_Widget')) {
             }
 
             ?>
-            <section class="section productcat-section <?= $_class ?>">
+            <section class="section product-cat-section productcat-section <?= $_class ?>">
                 <div class="grid-container width-extra title-container">
                     <?php if ($ACF->sub_title) : ?>
                     <h6 class="sub-title"><?php echo $ACF->sub_title; ?></h6>
@@ -71,7 +71,7 @@ if (!class_exists('ProductCat_Widget')) {
 
                 // loop
                 if ( $ACF->product_cat ) :
-                    if ( ! $ACF->full_width ) echo '<div class="grid-container">';
+                    if ( ! $ACF->full_width ) echo '<div class="grid-container width-extra">';
                 ?>
                 <div class="grid-x grid-productcat">
                     <?php
@@ -79,13 +79,13 @@ if (!class_exists('ProductCat_Widget')) {
                         $term = get_term( $term_id );
                         if ($term) :
                             $thumbnail_id = get_term_meta( $term->term_id, 'thumbnail_id', true );
-                        ?>
+                    ?>
                     <div class="cell cell-<?=$key?>">
-                        <figure class="cover">
-                            <span class="after-overlay scale"><?php echo wp_get_attachment_image($thumbnail_id, 'medium'); ?></span>
+                        <figure class="cover scale">
+                            <a href="<?php echo get_term_link($term->term_id, 'product_cat'); ?>" class="after-overlay" aria-label="<?php echo esc_attr($term->name); ?>"><?php echo wp_get_attachment_image($thumbnail_id, 'medium'); ?></a>
                             <figcaption>
                                 <h6><?php echo $term->name; ?></h6>
-                                <a class="link-overlay" href="<?php echo get_term_link($term->term_id, 'product_cat'); ?>"></a>
+                                <a title="<?php echo esc_attr($term->name); ?>" class="link-overlay" href="<?php echo get_term_link($term->term_id, 'product_cat'); ?>"></a>
                             </figcaption>
                         </figure>
                     </div>

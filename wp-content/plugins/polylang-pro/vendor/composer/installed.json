@@ -1,17 +1,17 @@
 [
     {
         "name": "wpsyntex/polylang",
-        "version": "3.1.x-dev",
-        "version_normalized": "3.1.9999999.9999999-dev",
+        "version": "3.2.x-dev",
+        "version_normalized": "3.2.9999999.9999999-dev",
         "source": {
             "type": "git",
             "url": "https://github.com/polylang/polylang.git",
-            "reference": "8d06908130ac3fd2fb57f1f79ceba9045a175ea4"
+            "reference": "9555976eb2dc703519184632f83fa6114d3a9ce3"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/polylang/polylang/zipball/8d06908130ac3fd2fb57f1f79ceba9045a175ea4",
-            "reference": "8d06908130ac3fd2fb57f1f79ceba9045a175ea4",
+            "url": "https://api.github.com/repos/polylang/polylang/zipball/9555976eb2dc703519184632f83fa6114d3a9ce3",
+            "reference": "9555976eb2dc703519184632f83fa6114d3a9ce3",
             "shasum": ""
         },
         "require": {
@@ -19,14 +19,14 @@
         },
         "require-dev": {
             "automattic/vipwpcs": "*",
-            "behat/behat": "3.7.*",
+            "behat/behat": "^3.7|^3.8",
             "dealerdirect/phpcodesniffer-composer-installer": "*",
             "phpcompatibility/phpcompatibility-wp": "*",
             "wp-coding-standards/wpcs": "*",
             "wpsyntex/polylang-phpstan": "dev-master",
-            "wpsyntex/wp-phpunit": "dev-branch-5.7"
+            "yoast/phpunit-polyfills": "^1.0"
         },
-        "time": "2021-12-14T09:11:50+00:00",
+        "time": "2022-09-06T06:47:35+00:00",
         "type": "wordpress-plugin",
         "installation-source": "source",
         "autoload": {

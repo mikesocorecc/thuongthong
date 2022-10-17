@@ -60,7 +60,7 @@ if ( ! class_exists( 'FilterTabsProducts_Widget' ) ) {
                     <div class="filter-tabs">
                         <ul>
                             <li class="tabs-inner">
-                                <a data-tab="all" aria-label="<?php echo esc_attr__('All', 'hd'); ?>" class="tab-title" href="#<?=$all_id?>"><?php echo __('All', 'hd'); ?></a>
+                                <a data-tab="all" aria-label="<?php echo __('All', 'hd'); ?>" class="tab-title" href="#<?=$all_id?>"><?php echo __('All', 'hd'); ?></a>
                             </li>
                             <?php
                             foreach ( $ACF->product_cat as $i => $term_id ) :
@@ -73,7 +73,7 @@ if ( ! class_exists( 'FilterTabsProducts_Widget' ) ) {
                         </ul>
                     </div>
                     <div class="filter-tabs-content">
-                        <div class="tabs-panel" id="<?=$all_id?>" aria-labelledby="<?php echo esc_attr__('All', 'hd'); ?>">
+                        <div class="tabs-panel" id="<?=$all_id?>" aria-labelledby="<?php echo __('All', 'hd'); ?>">
                             <?php
                             $r = query_by_terms(null, 'product_cat', 'product', $ACF->include_children, $ACF->product_number);
                             if ($r) :

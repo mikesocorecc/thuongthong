@@ -26,7 +26,7 @@ if ( ! class_exists( 'Acf_Plugin' ) ) {
             $this->_fieldMenus();
 
 			add_filter( 'acf/fields/wysiwyg/toolbars', [ &$this, 'wysiwyg_toolbars' ] );
-			add_filter( 'wp_nav_menu_objects', [ &$this, 'wp_nav_menu_objects' ], 11, 1 );
+			add_filter( 'wp_nav_menu_objects', [ &$this, 'wp_nav_menu_objects' ], 11, 2 );
 		}
 
 		// -------------------------------------------------------------
@@ -344,12 +344,12 @@ if ( ! class_exists( 'Acf_Plugin' ) ) {
 
 		// -------------------------------------------------------------
 
-		/**
-		 * @param $items
-		 *
-		 * @return mixed
-		 */
-		public function wp_nav_menu_objects( $items ) {
+        /**
+         * @param $items
+         * @param $args
+         * @return mixed
+         */
+		public function wp_nav_menu_objects( $items, $args ) {
 			foreach ( $items as &$item ) {
 
 				$title = $item->title;

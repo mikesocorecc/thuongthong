@@ -171,10 +171,6 @@ class PLLWC_Plugins_Compat {
 			$this->bundles = new PLLWC_Product_Bundles();
 		}
 
-		if ( class_exists( 'WC_Mix_and_Match' ) ) {
-			$this->mix_match = new PLLWC_Mix_Match();
-		}
-
 		if ( defined( 'WC_MIN_MAX_QUANTITIES' ) ) {
 			$this->min_max = new PLLWC_Min_Max_Quantities();
 		}
@@ -195,6 +191,9 @@ class PLLWC_Plugins_Compat {
 
 		// WC Free Gift Coupons initializes itself after us.
 		add_action( 'init', array( $this, 'maybe_init_fgc' ) );
+
+		// WC Mix and Match Products initializes itself after us.
+		add_action( 'init', array( $this, 'maybe_init_mnm' ) );
 	}
 
 	/**
@@ -205,7 +204,7 @@ class PLLWC_Plugins_Compat {
 	 * @return void
 	 */
 	public function init_wc_brand() {
-		if ( class_exists( 'WC_Brands_Admin' ) ) {
+		if ( defined( 'WC_BRANDS_VERSION' ) ) {
 			$this->brands = new PLLWC_Brands();
 		}
 	}
@@ -234,6 +233,17 @@ class PLLWC_Plugins_Compat {
 	public function maybe_init_fgc() {
 		if ( class_exists( 'WC_Free_Gift_Coupons' ) ) {
 			$this->fgc = new PLLWC_Free_Gift_Coupons();
+		}
+	}
+
+	/**
+	 * Initializes the compatibility with the plugin WooCommerce Mix and Match Products.
+	 *
+	 * @since 1.7
+	 */
+	public function maybe_init_mnm() {
+		if ( class_exists( 'WC_Mix_and_Match' ) ) {
+			$this->mix_match = new PLLWC_Mix_Match();
 		}
 	}
 

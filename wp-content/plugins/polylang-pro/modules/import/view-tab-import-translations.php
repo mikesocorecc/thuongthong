@@ -17,6 +17,9 @@ $url = admin_url( 'admin.php?page=mlang_strings&noheader=true' );
 		<div class="form-field">
 			<?php wp_nonce_field( PLL_Import_Action::ACTION_NAME, PLL_Import_Action::NONCE_NAME ); ?>
 			<input type="hidden" name="pll_action" value="import-translations" />
+			<label class="screen-reader-text" for="importFileToUpload">
+				<?php esc_html_e( 'Upload a translation file', 'polylang-pro' ); ?>
+			</label>
 			<input type="file" name="importFileToUpload" id="importFileToUpload">
 		</div>
 		<p class="submit">

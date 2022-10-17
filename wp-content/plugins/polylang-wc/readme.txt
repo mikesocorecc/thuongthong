@@ -1,10 +1,10 @@
 === Polylang for WooCommerce ===
-Contributors: Chouby, manooweb, sebastienserre
+Contributors: Chouby, manooweb, sebastienserre, greglone
 Tags: multilingual, woocommerce
-Requires at least: 5.4
-Tested up to: 5.9
+Requires at least: 5.7
+Tested up to: 6.0
 Requires PHP: 7.0
-Stable tag: 1.6.3
+Stable tag: 1.7
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -17,6 +17,22 @@ Some popular extensions such as WooCommerce Subscriptions, Dynamic Pricing, Tabl
 This extension can be used either with the free version of Polylang or in combination with Polylang Pro.
 
 == Changelog ==
+
+= 1.7 (2022-08-23) =
+
+* Requires WordPress 5.7 or higher, WC 5.1 or higher, Polylang 3.0 or higher.
+* Allow to translate cart when using multiple domains in recent browsers. Requires WC 6.7.
+* Filter the product search block results by language.
+* Add compatibility with Mix & Match Products 2.0. Props @helgatheviking
+* Fix multiple emails sent to emails added through the filter 'woocommerce_email_recipient_new_order'
+* Fix a deprecated notice with PHP 8.1
+* Fix WooCommerce pages translations not created when using the WooCommerce wizard.
+* Fix query for reserved stock
+* Fix REST API for products with Polylang Pro 3.2+
+* Fix deprecated notice in WooCommerce Subscriptions.
+* Fix a fatal error with WooCommerce Variation Swatches and Photos.
+* Fix WC Brands compatibility not loaded on frontend.
+* Fix a conflict with Germanized for WooCommerce
 
 = 1.6.3 (2022-01-31) =
 

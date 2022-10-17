@@ -234,7 +234,12 @@ class PLLWC_Subscriptions {
 	 * @return void
 	 */
 	public function change_locale() {
-		WC_Subscriptions::load_plugin_textdomain();
+		if ( class_exists( 'WC_Subscriptions_Core_Plugin' ) ) {
+			WC_Subscriptions_Core_Plugin::instance()->load_plugin_textdomain();
+		} else {
+			// Backward compatibility with Subscriptions < 4.0.0.
+			WC_Subscriptions::load_plugin_textdomain();
+		}
 	}
 
 	/**

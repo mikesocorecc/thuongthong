@@ -25,8 +25,8 @@ class PLL_REST_Post extends PLL_REST_Translated_Object {
 	public function __construct( &$rest_api, $content_types ) {
 		parent::__construct( $rest_api, $content_types );
 
-		$this->type = 'post';
-		$this->id   = 'ID';
+		$this->type           = 'post';
+		$this->setter_id_name = 'ID';
 
 		add_action( 'parse_query', array( $this, 'parse_query' ), 1 );
 		add_action( 'add_attachment', array( $this, 'set_media_language' ) );
@@ -50,11 +50,27 @@ class PLL_REST_Post extends PLL_REST_Translated_Object {
 	 * @return void
 	 */
 	public function parse_query( $query ) {
-		if ( isset( $this->params['lang'] ) && in_array( $this->params['lang'], $this->model->get_languages_list( array( 'fields' => 'slug' ) ) ) ) {
+		if ( $this->can_filter_query( $query ) ) {
 			$pll_query = new PLL_Query( $query, $this->model );
-			$pll_query->query->set( 'lang', $this->params['lang'] ); // Set query vars "lang" with the REST parameter value; fix #405 and #384
-			$pll_query->filter_query( $this->model->get_language( $this->params['lang'] ) ); // fix #493
+			$pll_query->query->set( 'lang', $this->request['lang'] ); // Set query vars "lang" with the REST parameter value; fix #405 and #384
+			$pll_query->filter_query( $this->model->get_language( $this->request['lang'] ) ); // fix #493
 		}
+	}
+
+	/**
+	 * Whether or not the given query is filterable by language.
+	 *
+	 * @since 3.2
+	 *
+	 * @param WP_Query $query The query to check.
+	 * @return boolean
+	 */
+	protected function can_filter_query( $query ) {
+		$query_post_types           = ! empty( $query->query['post_type'] ) ? (array) $query->query['post_type'] : array( 'post' );
+		$allowed_post_types         = array_keys( $this->content_types );
+		$allowed_queried_post_types = array_intersect( $query_post_types, $allowed_post_types );
+
+		return isset( $this->request['lang'] ) && ! empty( $allowed_queried_post_types );
 	}
 
 	/**
@@ -113,6 +129,12 @@ class PLL_REST_Post extends PLL_REST_Translated_Object {
 			if ( $this->is_save_post_request( $request->get_param( 'id' ), $request ) && ! empty( $request->get_param( 'lang' ) ) ) {
 				$this->model->post->set_language( $request->get_param( 'id' ), $request->get_param( 'lang' ) );
 			}
+
+			// Save the translations earlier.
+			if ( $this->is_save_post_request( $request->get_param( 'id' ), $request ) && ! empty( $request->get_param( 'translations' ) ) ) {
+				$this->save_translations( $request->get_param( 'translations' ), get_post( $request->get_param( 'id' ) ) );
+			}
+
 			foreach ( array_keys( $this->content_types ) as $post_type ) {
 				register_rest_field(
 					$this->get_rest_field_type( $post_type ),
@@ -202,28 +224,17 @@ class PLL_REST_Post extends PLL_REST_Translated_Object {
 		$return = array();
 
 		// When we come from a post new creation
-		$from_post_id = isset( $_GET['from_post'] ) ? (int) $_GET['from_post'] : 0; // phpcs:ignore WordPress.Security.NonceVerification
+		$from_post_id = $this->get_from_post_id();
 
 		foreach ( $this->model->get_languages_list() as $language ) {
-			$return[ $language->slug ]['lang'] = $language;
-
-			$value = $this->model->post->get_translation( $object['id'], $language );
-
+			// If the request isn't from a source post creation, then get the translated post in the correct language.
 			if ( ! empty( $from_post_id ) ) {
-				$value = $this->model->post->get( $from_post_id, $language );
+				$tr_id = $this->model->post->get( $from_post_id, $language );
+			} else {
+				$tr_id = $this->model->post->get_translation( $object[ $this->getter_id_name ], $language );
 			}
 
-			$link = $this->links->get_new_post_translation_link( $object['id'], $language, 'keep ampersand' );
-			$return[ $language->slug ]['links']['add_link'] = $link;
-
-			if ( $value ) {
-				$translated_post = get_post( $value, ARRAY_A );
-				$return[ $language->slug ]['links']['edit_link'] = get_edit_post_link( $value, 'keep ampersand' );
-				$return[ $language->slug ]['translated_post'] = array(
-					'id'    => $translated_post['ID'],
-					'title' => $translated_post['post_title'],
-				);
-			}
+			$return[ $language->slug ] = $this->get_translation_table_data( $object[ $this->getter_id_name ], $tr_id, $language );
 
 			/**
 			 * Filters the REST translations table.
@@ -234,10 +245,53 @@ class PLL_REST_Post extends PLL_REST_Translated_Object {
 			 * @param int          $id       Source post id.
 			 * @param PLL_Language $language Translation language
 			 */
-			$return = apply_filters( 'pll_rest_translations_table', $return, $object['id'], $language );
+			$return = apply_filters( 'pll_rest_translations_table', $return, $object[ $this->getter_id_name ], $language );
 		}
 
 		return $return;
+	}
+
+	/**
+	 * Generates links, language information and translated posts for a given language into a translation table.
+	 *
+	 * @since 3.2
+	 *
+	 * @param int          $id               The id of the existing post to get datas for the translations table element.
+	 * @param int          $tr_id            The id of the translated post for the given language if exists.
+	 * @param PLL_Language $language         The given language object.
+	 * @return array The translation data of the given language.
+	 */
+	public function get_translation_table_data( $id, $tr_id, $language ) {
+		$translation_data = array();
+
+		$translation_data['lang'] = $language;
+
+		$link = $this->links->get_new_post_translation_link( $id, $language, 'keep ampersand' );
+		$translation_data['links']['add_link'] = $link;
+
+		// If a translation of the given post exist in the desired language, then we can add the edit link and the translated post information.
+		if ( ! empty( $tr_id ) ) {
+			$translated_post = get_post( $tr_id, ARRAY_A );
+			$translation_data['links']['edit_link'] = get_edit_post_link( $tr_id, 'keep ampersand' );
+			$translation_data['translated_post'] = array(
+				'id'    => $translated_post['ID'],
+				'title' => $translated_post['post_title'],
+			);
+		}
+
+		return $translation_data;
+	}
+
+	/**
+	 * Returns the post id of the post that we come from to create a translation.
+	 *
+	 * @since 3.2
+	 *
+	 * @return int The post id of the original post.
+	 */
+	public function get_from_post_id() {
+		// When we come from a post new creation.
+		return isset( $_GET['from_post'] ) ? (int) $_GET['from_post'] : 0; // phpcs:ignore WordPress.Security.NonceVerification
 	}
 
 	/**
@@ -253,8 +307,8 @@ class PLL_REST_Post extends PLL_REST_Translated_Object {
 	 * @return void
 	 */
 	public function set_media_language( $post_id ) {
-		if ( ! empty( $this->params['id'] ) && $post_id !== $this->params['id'] ) {
-			$this->model->post->set_language( $post_id, $this->model->post->get_language( $this->params['id'] ) );
+		if ( ! empty( $this->request['id'] ) && $post_id !== $this->request['id'] ) {
+			$this->model->post->set_language( $post_id, $this->model->post->get_language( $this->request['id'] ) );
 		}
 	}
 }

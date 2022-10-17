@@ -73,6 +73,29 @@ class PLLWC_Emails {
 	 * @return void
 	 */
 	public function mailer_init( $mailer ) {
+		$this->user_emails_init();
+		$this->customer_emails_init();
+
+		/**
+		 * Filters if the emails sent to shop managers must be sent in their own language.
+		 *
+		 * @since 1.7
+		 *
+		 * @param bool $enable True if emails are sent in shop manager language, false otherwise.
+		 */
+		if ( apply_filters( 'pllwc_enable_shop_manager_email_language', true ) ) {
+			$this->shop_manager_emails_init( $mailer );
+		}
+	}
+
+	/**
+	 * Setups actions related to emails sent to a user.
+	 *
+	 * @since 1.7
+	 *
+	 * @return void
+	 */
+	protected function user_emails_init() {
 		/**
 		 * Filters the actions used to send translated emails to a user.
 		 * The actions in the list must pass a `WP_User` or user id as first parameter.
@@ -93,10 +116,19 @@ class PLLWC_Emails {
 			add_action( $action, array( $this, 'before_user_email' ), 1 ); // Switch the language for the email.
 			add_action( $action, array( $this, 'after_email' ), 999 ); // Switch the language back after the email has been sent.
 		}
+	}
 
+	/**
+	 * Setups actions related to emails sent to a customer.
+	 *
+	 * @since 1.7
+	 *
+	 * @return void
+	 */
+	protected function customer_emails_init() {
 		/**
 		 * Filters the actions used to send translated customer emails related to an order.
-		 * The actions in the list must pass a `WP_Order` or order id as first parameter.
+		 * The actions in the list must pass a `WC_Order` or order id as first parameter.
 		 *
 		 * @since 1.6
 		 *
@@ -128,8 +160,18 @@ class PLLWC_Emails {
 			add_action( $action, array( $this, 'before_order_email' ), 1 ); // Switch the language for the email.
 			add_action( $action, array( $this, 'after_email' ), 999 ); // Switch the language back after the email has been sent.
 		}
+	}
 
-		// Cancelled order emails sent to admin.
+	/**
+	 * Setups actions related to emails sent to shop managers.
+	 *
+	 * @since 1.7
+	 *
+	 * @param WC_Emails $mailer The WooCommerce emails controller.
+	 * @return void
+	 */
+	protected function shop_manager_emails_init( $mailer ) {
+		// Cancelled order emails sent to shop managers.
 		$actions = array(
 			'woocommerce_order_status_processing_to_cancelled_notification',
 			'woocommerce_order_status_on-hold_to_cancelled_notification',
@@ -141,7 +183,7 @@ class PLLWC_Emails {
 			add_action( $action, array( $this, 'send_cancelled_order_email' ) );
 		}
 
-		// Failed order emails sent to admin.
+		// Failed order emails sent to shop managers.
 		$actions = array(
 			'woocommerce_order_status_pending_to_failed_notification',
 			'woocommerce_order_status_on-hold_to_failed_notification',
@@ -153,7 +195,7 @@ class PLLWC_Emails {
 			add_action( $action, array( $this, 'send_failed_order_email' ) );
 		}
 
-		// New order emails sent to admin.
+		// New order emails sent to shop managers.
 		$actions = array(
 			'woocommerce_order_status_pending_to_processing_notification',
 			'woocommerce_order_status_pending_to_completed_notification',
@@ -231,7 +273,7 @@ class PLLWC_Emails {
 			if ( PLL() instanceof PLL_Frontend && isset( PLL()->filters ) ) {
 				add_filter( 'locale', array( PLL()->filters, 'get_locale' ) );
 			}
-			remove_filter( 'get_user_metadata', array( $this, 'filter_user_locale' ), 10, 3 );
+			remove_filter( 'get_user_metadata', array( $this, 'filter_user_locale' ) );
 		}
 		WC()->load_plugin_textdomain();
 	}
@@ -389,10 +431,6 @@ class PLLWC_Emails {
 
 		if ( $user instanceof WP_User ) {
 			$locale = get_user_meta( $user->ID, 'locale', true );
-			if ( empty( $locale ) ) {
-				// If the user uses the default site locale.
-				$locale = get_locale();
-			}
 			$language = PLL()->model->get_language( $locale );
 		}
 
@@ -417,10 +455,20 @@ class PLLWC_Emails {
 		if ( method_exists( $email, 'trigger' ) ) {
 			$recipients = explode( ',', $email->get_recipient() );
 
+			remove_all_filters( 'woocommerce_email_recipient_' . $email->id ); // Prevents multiple emails sent to recipients added in this filter.
+			remove_filter( 'get_user_metadata', array( $this, 'filter_user_locale' ) );
+
+			$emails_by_language = array();
+
 			foreach ( $recipients as $recipient ) {
-				remove_filter( 'get_user_metadata', array( $this, 'filter_user_locale' ), 10, 3 );
-				$this->set_email_language( $this->get_language_by_email( $recipient ) );
-				$email->recipient = $recipient;
+				$language = $this->get_language_by_email( $recipient );
+				$emails_by_language[ $language->slug ]['language']     = $language;
+				$emails_by_language[ $language->slug ]['recipients'][] = $recipient;
+			}
+
+			foreach ( $emails_by_language as $em ) {
+				$this->set_email_language( $em['language'] );
+				$email->recipient = implode( ',', $em['recipients'] );
 				$email->trigger( $order_id );
 				$this->after_email();
 			}

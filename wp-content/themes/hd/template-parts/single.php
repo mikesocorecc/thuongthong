@@ -16,7 +16,7 @@ global $post;
 ?>
 
 <section class="section single-post">
-    <div class="grid-container">
+    <div class="grid-container width-extra">
         <?php get_template_part('template-parts/parts/sharing'); ?>
         <div class="col-content">
             <?php echo post_terms($post->ID); ?>

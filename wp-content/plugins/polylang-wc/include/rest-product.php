@@ -28,8 +28,9 @@ class PLLWC_REST_Product extends PLL_REST_Translated_Object {
 
 		parent::__construct( PLL()->rest_api, array( 'product' => array( 'filters' => false ) ) );
 
-		$this->type = 'post';
-		$this->id   = 'ID';
+		$this->type           = 'post';
+		$this->id             = 'ID'; // Backward compatibility with Polylang Pro < 3.2.
+		$this->setter_id_name = 'ID';
 
 		$this->data_store = PLLWC_Data_Store::load( 'product_language' );
 

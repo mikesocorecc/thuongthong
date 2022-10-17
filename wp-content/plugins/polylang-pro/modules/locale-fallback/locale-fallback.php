@@ -59,24 +59,60 @@ class PLL_Locale_Fallback {
 	 *
 	 * @since 2.9
 	 *
-	 * @param string $file Translation file name.
-	 * @return string
+	 * @param  string|false $file Translation file name.
+	 * @return string|false
 	 */
 	public function load_file( $file ) {
-		if ( ! is_readable( $file ) ) {
-			$locale = is_admin() ? get_user_locale() : get_locale();
-			$language = $this->model->get_language( $locale );
+		if ( empty( $file ) || ! is_string( $file ) ) {
+			return $file;
+		}
 
-			if ( ! empty( $language ) && ! empty( $language->fallbacks ) ) {
-				foreach ( $language->fallbacks as $fallback ) {
-					$_file = str_replace( $locale, $fallback, $file );
-					if ( is_readable( $_file ) ) {
-						$file = $_file;
-						continue;
-					}
-				}
+		if ( is_readable( $file ) ) {
+			return $file;
+		}
+
+		$extension = pathinfo( $file, PATHINFO_EXTENSION );
+
+		if ( 'mo' !== $extension && 'json' !== $extension ) {
+			return $file;
+		}
+
+		$locale = is_admin() ? get_user_locale() : get_locale();
+
+		if ( empty( $locale ) ) {
+			return $file;
+		}
+
+		$language = $this->model->get_language( $locale );
+
+		if ( empty( $language ) || empty( $language->fallbacks ) || ! is_array( $language->fallbacks ) ) {
+			return $file;
+		}
+
+		$dir_path  = dirname( $file ) . DIRECTORY_SEPARATOR;
+		$file_name = basename( $file );
+		$locale    = preg_quote( $locale, '@' );
+
+		foreach ( $language->fallbacks as $fallback ) {
+			if ( empty( $fallback ) || ! is_string( $fallback ) ) {
+				continue;
+			}
+
+			if ( 'mo' === $extension ) {
+				// Matches "fr_FR.mo" and "foobar-fr_FR.mo".
+				$pattern = "@^(.+-)?{$locale}(\.mo)$@";
+			} else {
+				// Matches "fr_FR-md5hash.json" and "foobar-fr_FR-md5hash.json".
+				$pattern = "@^(.+-)?{$locale}(-[0-9a-f]{32}\.json)$@";
+			}
+
+			$_file = $dir_path . preg_replace( $pattern, "\$1{$fallback}\$2", $file_name );
+
+			if ( is_readable( $_file ) ) {
+				return $_file;
 			}
 		}
+
 		return $file;
 	}
 

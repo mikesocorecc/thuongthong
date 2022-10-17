@@ -24,7 +24,7 @@
             }
             
             protected function includes() {
-                
+            
             }
             
             protected function hooks() {
@@ -37,7 +37,14 @@
                 add_filter( 'woocommerce_variable_children_args', array( $this, 'variable_children_args' ), 10, 3 );
                 add_filter( 'woocommerce_variation_is_active', array( $this, 'disable_out_of_stock_item' ), 10, 2 );
                 add_filter( 'woocommerce_available_variation', array( $this, 'add_variation_data' ), 10, 3 );
+                
+                add_action( 'woocommerce_before_variations_form', array( $this, 'before_variations_form' ) );
+                add_action( 'woocommerce_after_variations_form', array( $this, 'after_variations_form' ) );
                 // add_action( 'woocommerce_after_variations_form', array( $this, 'enqueue_script' ) );
+                
+                // add_filter( 'nocache_headers', array( $this, 'cache_ajax_response' ), 99 );
+                // add_action( 'wp', array( $this, 'stop_prevent_ajax_caching' ), 1 );
+                // wp_cache_flush()
             }
             
             protected function init() {
@@ -45,6 +52,68 @@
             }
             
             // Start
+            
+            public function before_variations_form() {
+                global $product;
+                $threshold_min  = apply_filters( 'woocommerce_ajax_variation_threshold', 30, $product );
+                $threshold_max  = $this->get_variation_threshold_max( $product );
+                $total_children = count( $product->get_children() );
+                $attributes     = apply_filters( 'woo_variation_swatches_single_product_wrapper_attributes', array(
+                    'data-product_id'    => absint( $product->get_id() ),
+                    'data-threshold_min' => absint( $threshold_min ),
+                    'data-threshold_max' => absint( $threshold_max ),
+                    'data-total'         => absint( $total_children ),
+                ),                               $product );
+                
+                echo sprintf( '<div %s>', wc_implode_html_attributes( $attributes ) ); // WPCS: XSS ok. );
+            }
+            
+            public function after_variations_form() {
+                echo '</div>';
+            }
+            
+            public function stop_prevent_ajax_caching() {
+                global $wp_query;
+                if ( ! is_ajax() ) {
+                    return true;
+                }
+                
+                $action   = isset( $_GET[ 'wc-ajax' ] ) ? sanitize_text_field( $_GET[ 'wc-ajax' ] ) : false;
+                $requests = array( 'woo_get_variations', 'woo_get_all_variations' );
+                
+                if ( $action && in_array( $action, $requests ) ) {
+                    wc_maybe_define_constant( 'DONOTCACHEPAGE', false );
+                    wc_maybe_define_constant( 'DONOTCACHEOBJECT', false );
+                    wc_maybe_define_constant( 'DONOTCACHEDB', false );
+                }
+                
+                return true;
+                
+            }
+            
+            public function cache_ajax_response( $headers ) {
+                
+                if ( ! is_ajax() ) {
+                    return $headers;
+                }
+                
+                $action = isset( $_GET[ 'wc-ajax' ] ) ? sanitize_text_field( $_GET[ 'wc-ajax' ] ) : false;
+                
+                $requests = array( 'woo_get_variations', 'woo_get_all_variations' );
+                if ( $action && in_array( $action, $requests ) ) {
+                    // ask the browser to cache this response
+                    
+                    $expires       = HOUR_IN_SECONDS;        // 1 hr
+                    $cache_control = sprintf( 'public, s-max-age=%d', $expires );
+                    
+                    $headers[ 'Pragma' ]                                    = 'cache'; // public / cache. backwards compatibility with HTTP/1.0 caches
+                    $headers[ 'Expires' ]                                   = $expires;
+                    $headers[ 'Cache-Control' ]                             = $cache_control;
+                    $headers[ 'X-Variation-Swatches-Ajax-Header-Modified' ] = true;
+                }
+                
+                return $headers;
+            }
             
             public function add_variation_data( $variation_data, $product, $variation ) {
                 
@@ -57,7 +126,7 @@
                 }
                 
                 if ( woo_variation_swatches()->is_pro() && wc_string_to_bool( woo_variation_swatches()->get_option( 'show_variation_stock_info', 'no' ) ) ) {
-                    $variation_data[ 'variation_stock_left' ] = $variation->managing_stock() ? sprintf( esc_html__( '%s left', 'woo-variation-swatches-pro' ), $variation->get_stock_quantity() ) : '';
+                    $variation_data[ 'variation_stock_left' ] = $variation->managing_stock() ? sprintf( esc_html__( '%s left', 'woo-variation-swatches' ), $variation->get_stock_quantity() ) : '';
                 }
                 
                 return $variation_data;
@@ -92,8 +161,8 @@
             public function add_to_cart_variation_params( $params, $handle ) {
                 
                 if ( 'wc-add-to-cart-variation' === $handle ) {
-                    
                     if ( is_product() ) {
+                        
                         $product = wc_get_product();
                         
                         $params[ 'woo_variation_swatches_ajax_variation_threshold_min' ] = apply_filters( 'woocommerce_ajax_variation_threshold', 30, $product );
@@ -135,12 +204,23 @@
                 
                 $this->add_inline_style();
                 
-                wp_register_script( 'woo-variation-swatches', woo_variation_swatches()->assets_url( "/js/frontend{$suffix}.js" ), array( 'jquery', 'wp-util' ), woo_variation_swatches()->assets_version( "/js/frontend{$suffix}.js" ), true );
+                wp_register_script( 'woo-variation-swatches', woo_variation_swatches()->assets_url( "/js/frontend{$suffix}.js" ), array( 'jquery', 'wp-util', 'underscore', 'jquery-blockui', 'wp-api-request', 'wp-api-fetch', 'wp-polyfill' ), woo_variation_swatches()->assets_version( "/js/frontend{$suffix}.js" ), true );
                 
                 wp_localize_script( 'woo-variation-swatches', 'woo_variation_swatches_options', $this->js_options() );
                 
                 // @TODO: we need to load swatches script based on 'wc-add-to-cart-variation' script
                 wp_enqueue_script( 'woo-variation-swatches' );
+            }
+            
+            public function inline_svg_encode( $string ) {
+                $entities     = array( '<', '>', '#', '"' );
+                $replacements = array( '%3C', '%3E', "%23", "'" );
+                
+                return str_replace( $entities, $replacements, $string );
+            }
+            
+            public function inline_svg( $string ) {
+                return sprintf( 'url("data:image/svg+xml;utf8,%s")', $this->inline_svg_encode( $string ) );
             }
             
             public function implode_css_property_value( $raw_properties ) {
@@ -173,7 +253,14 @@
                     return;
                 }
                 
-                $style = $this->implode_css_property_value( $this->inline_style_declaration() );
+                $tick_color  = sanitize_hex_color( woo_variation_swatches()->get_option( 'tick_color', '#ffffff' ) );
+                $cross_color = sanitize_hex_color( woo_variation_swatches()->get_option( 'cross_color', '#ff0000' ) );
+                
+                $style = "";
+                $style .= sprintf( "\n--wvs-tick:%s;\n", $this->inline_svg( sprintf( '<svg filter="drop-shadow(0px 0px 2px rgb(0 0 0 / .8))" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 30 30"><path fill="none" stroke="%s" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M4 16L11 23 27 7"/></svg>', $tick_color ) ) );
+                $style .= sprintf( "\n--wvs-cross:%s;\n", $this->inline_svg( sprintf( '<svg filter="drop-shadow(0px 0px 5px rgb(255 255 255 / .6))" xmlns="http://www.w3.org/2000/svg" width="72px" height="72px" viewBox="0 0 24 24"><path fill="none" stroke="%s" stroke-linecap="round" stroke-width="0.6" d="M5 5L19 19M19 5L5 19"/></svg>', $cross_color ) ) );
+                
+                $style .= $this->implode_css_property_value( $this->inline_style_declaration() );
                 
                 $style = sprintf( ":root {%s}", $style );
                 
@@ -616,7 +703,7 @@
                     'name'             => '',
                     'id'               => '',
                     'class'            => '',
-                    'show_option_none' => esc_html__( 'Choose an option', 'woocommerce' ),
+                    'show_option_none' => esc_html__( 'Choose an option', 'woo-variation-swatches' ),
                     'is_archive'       => false
                 ) );
                 
@@ -642,7 +729,7 @@
                 $class            = $args[ 'class' ];
                 $show_option_none = (bool) $args[ 'show_option_none' ];
                 // $show_option_none      = true;
-                $show_option_none_text = $args[ 'show_option_none' ] ? $args[ 'show_option_none' ] : esc_html__( 'Choose an option', 'woocommerce' ); // We'll do our best to hide the placeholder, but we'll need to show something when resetting options.
+                $show_option_none_text = $args[ 'show_option_none' ] ? $args[ 'show_option_none' ] : esc_html__( 'Choose an option', 'woo-variation-swatches' ); // We'll do our best to hide the placeholder, but we'll need to show something when resetting options.
                 
                 if ( empty( $options ) && ! empty( $product ) && ! empty( $attribute ) ) {
                     $attributes = $product->get_variation_attributes();
@@ -743,7 +830,7 @@
                 // End Swatches
                 $html .= $wrapper . $item . $wrapper_end;
                 
-                return $html;
+                return apply_filters( 'woo_variation_swatches_html', $html, $args, $swatches_data, $this );
             }
         }
     }

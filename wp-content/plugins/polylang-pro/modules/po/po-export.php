@@ -130,7 +130,7 @@ class PLL_PO_Export extends PLL_Export_File {
 	 *
 	 * @since 2.7
 	 *
-	 * @param string $type Type of data to be exported, @see PLL_Export_File_Interface .
+	 * @param string $type Type of data to be exported.
 	 * @param string $id   Optional, unique identifier to retrieve the data in the database.
 	 * @return void
 	 */

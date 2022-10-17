@@ -10,7 +10,7 @@
 if (have_posts()) the_post();
 
 ?>
-<section class="section single-elementor">
+<section class="section single-elementor" style="margin-top: 150px;">
 	<div class="col-content clearfix">
 		<?php
 		// post content

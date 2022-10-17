@@ -61,8 +61,8 @@ class PLLWC_Product_Language_CPT extends PLLWC_Translated_Object_Language_CPT {
 		add_action( 'pll_post_synchronized', array( $this, 'post_synchronized' ), 10, 2 );
 
 		// Attributes.
-		remove_action( 'edit_term', array( 'WC_Post_Data', 'edit_term' ), 10, 3 );
-		remove_action( 'edited_term', array( 'WC_Post_Data', 'edited_term' ), 10, 3 );
+		remove_action( 'edit_term', array( 'WC_Post_Data', 'edit_term' ) );
+		remove_action( 'edited_term', array( 'WC_Post_Data', 'edited_term' ) );
 		add_action( 'edit_term', array( $this, 'edit_term' ), 10, 3 );
 		add_action( 'edited_term', array( $this, 'edited_term' ), 10, 3 );
 	}
@@ -192,9 +192,12 @@ class PLLWC_Product_Language_CPT extends PLLWC_Translated_Object_Language_CPT {
 			$to_copy = array_keys( $_to_copy );
 
 			// Add attributes in variations.
-			foreach ( array_keys( get_post_custom( $from ) ) as $key ) {
-				if ( 0 === strpos( $key, 'attribute_' ) ) {
-					$to_copy[] = $key;
+			$metas_from = get_post_custom( $from );
+			if ( is_array( $metas_from ) ) {
+				foreach ( array_keys( $metas_from ) as $key ) {
+					if ( is_string( $key ) && 0 === strpos( $key, 'attribute_' ) ) {
+						$to_copy[] = $key;
+					}
 				}
 			}
 

@@ -46,7 +46,10 @@ class PLLWC_Frontend {
 		}
 
 		// Filters the product search form.
-		add_filter( 'get_product_search_form', array( PLL()->filters_search, 'get_search_form' ), 99 );
+		if ( is_callable( array( PLL()->filters_search, 'get_search_form' ) ) ) {
+			add_filter( 'get_product_search_form', array( PLL()->filters_search, 'get_search_form' ), 99 );
+			add_filter( 'render_block_woocommerce/product-search', array( PLL()->filters_search, 'get_search_form' ) );
+		}
 
 		if ( ! PLL()->options['force_lang'] ) {
 			if ( ! get_option( 'permalink_structure' ) ) {
@@ -253,7 +256,7 @@ class PLLWC_Frontend {
 	public function fix_widget_price_filter( $url, $path ) {
 		global $wp;
 
-		if ( ! empty( $wp->request ) && trailingslashit( $wp->request ) === $path ) {
+		if ( ! empty( $wp->request ) && trailingslashit( $wp->request ) === $path && ! empty( PLL()->curlang ) ) {
 			$url = PLL()->links_model->switch_language_in_link( $url, PLL()->curlang );
 		}
 
@@ -270,6 +273,10 @@ class PLLWC_Frontend {
 	 * @return array
 	 */
 	public function shortcode_products_query( $args ) {
+		if ( empty( PLL()->curlang ) ) {
+			return $args;
+		}
+
 		$args['tax_query'][] = array(
 			'taxonomy' => 'language',
 			'field'    => 'term_taxonomy_id',
@@ -306,7 +313,9 @@ class PLLWC_Frontend {
 	public function ajax_get_endpoint( $url, $request ) {
 		// Remove wc-ajax to avoid the value %%endpoint%% to be encoded by add_query_arg (used in plain permalinks).
 		$url = remove_query_arg( 'wc-ajax', $url );
-		$url = PLL()->links_model->switch_language_in_link( $url, PLL()->curlang );
+		if ( ! empty( PLL()->curlang ) ) {
+			$url = PLL()->links_model->switch_language_in_link( $url, PLL()->curlang );
+		}
 		return add_query_arg( 'wc-ajax', $request, $url );
 	}
 

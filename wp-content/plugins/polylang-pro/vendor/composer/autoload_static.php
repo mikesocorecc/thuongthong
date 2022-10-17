@@ -4,13 +4,14 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit4d5b621faabd546bfdfd9dd79a15310d
+class ComposerStaticInit97203357add8d9816cdfbfb3848a427c
 {
     public static $classMap = array (
         'PLL_ACF' => __DIR__ . '/../..' . '/integrations/acf/acf.php',
         'PLL_ACF_Auto_Translate' => __DIR__ . '/../..' . '/integrations/acf/acf-auto-translate.php',
         'PLL_ACF_Sync_Metas' => __DIR__ . '/../..' . '/integrations/acf/acf-sync-metas.php',
         'PLL_AS3CF' => __DIR__ . '/..' . '/wpsyntex/polylang/integrations/wp-offload-media/as3cf.php',
+        'PLL_Abstract_Language_Switcher_Block' => __DIR__ . '/../..' . '/modules/block-editor/abstract-language-switcher-block.php',
         'PLL_Abstract_Sitemaps' => __DIR__ . '/..' . '/wpsyntex/polylang/modules/sitemaps/abstract-sitemaps.php',
         'PLL_Accept_Language' => __DIR__ . '/..' . '/wpsyntex/polylang/frontend/accept-language.php',
         'PLL_Accept_Languages_Collection' => __DIR__ . '/..' . '/wpsyntex/polylang/frontend/accept-languages-collection.php',
@@ -42,7 +43,6 @@ class ComposerStaticInit4d5b621faabd546bfdfd9dd79a15310d
         'PLL_Base' => __DIR__ . '/..' . '/wpsyntex/polylang/include/base.php',
         'PLL_Block_Editor_Filter_Preload_Paths' => __DIR__ . '/..' . '/wpsyntex/polylang/admin/block-editor-filter-preload-paths.php',
         'PLL_Block_Editor_Plugin' => __DIR__ . '/../..' . '/modules/block-editor/block-editor-plugin.php',
-        'PLL_Block_Editor_Switcher_Block' => __DIR__ . '/../..' . '/modules/block-editor/block-editor-switcher-block.php',
         'PLL_Bulk_Translate' => __DIR__ . '/../..' . '/modules/bulk-translate/bulk-translate.php',
         'PLL_Bulk_Translate_Option' => __DIR__ . '/../..' . '/modules/bulk-translate/bulk-translate-option.php',
         'PLL_CPAC' => __DIR__ . '/../..' . '/integrations/admin-columns/cpac.php',
@@ -59,6 +59,7 @@ class ComposerStaticInit4d5b621faabd546bfdfd9dd79a15310d
         'PLL_Content_Blocks' => __DIR__ . '/../..' . '/integrations/content-blocks/content-blocks.php',
         'PLL_Cookie' => __DIR__ . '/..' . '/wpsyntex/polylang/include/cookie.php',
         'PLL_DOM_Document' => __DIR__ . '/../..' . '/modules/dom/dom-document.php',
+        'PLL_Db_Tools' => __DIR__ . '/..' . '/wpsyntex/polylang/include/db-tools.php',
         'PLL_Divi_Builder' => __DIR__ . '/../..' . '/integrations/divi/divi-builder.php',
         'PLL_Domain_Mapping' => __DIR__ . '/..' . '/wpsyntex/polylang/integrations/domain-mapping/domain-mapping.php',
         'PLL_Duplicate' => __DIR__ . '/../..' . '/modules/duplicate/duplicate.php',
@@ -67,9 +68,27 @@ class ComposerStaticInit4d5b621faabd546bfdfd9dd79a15310d
         'PLL_Duplicate_Trait' => __DIR__ . '/../..' . '/modules/duplicate/duplicate-trait.php',
         'PLL_Export_Download_Zip' => __DIR__ . '/../..' . '/modules/export/export-download-zip.php',
         'PLL_Export_File' => __DIR__ . '/../..' . '/modules/export/export-file.php',
+        'PLL_Export_File_Interface' => __DIR__ . '/../..' . '/modules/export/export-file-interface.php',
         'PLL_Export_Multi_Files' => __DIR__ . '/../..' . '/modules/export/export-multi-files.php',
         'PLL_Export_Strings_Translations' => __DIR__ . '/../..' . '/modules/export/export-strings-translations.php',
         'PLL_FLBuilder' => __DIR__ . '/../..' . '/integrations/beaver-builder/flbuilder.php',
+        'PLL_FSE_Abstract_Bulk_Edit_Template_Slugs_Module' => __DIR__ . '/../..' . '/modules/full-site-editing/fse-abstract-bulk-edit-template-slugs-module.php',
+        'PLL_FSE_Abstract_Module' => __DIR__ . '/../..' . '/modules/full-site-editing/fse-abstract-module.php',
+        'PLL_FSE_Default_Language_Change' => __DIR__ . '/../..' . '/modules/full-site-editing/fse-default-language-change.php',
+        'PLL_FSE_Language' => __DIR__ . '/../..' . '/modules/full-site-editing/fse-language.php',
+        'PLL_FSE_Language_Slug_Change' => __DIR__ . '/../..' . '/modules/full-site-editing/fse-language-slug-change.php',
+        'PLL_FSE_Post_Types' => __DIR__ . '/../..' . '/modules/full-site-editing/fse-post-types.php',
+        'PLL_FSE_Query_Filters' => __DIR__ . '/../..' . '/modules/full-site-editing/fse-query-filters.php',
+        'PLL_FSE_REST_Duplicate_Template' => __DIR__ . '/../..' . '/modules/full-site-editing/fse-rest-duplicate-template.php',
+        'PLL_FSE_REST_Enforce_Default_Template' => __DIR__ . '/../..' . '/modules/full-site-editing/fse-rest-enforce-default-template.php',
+        'PLL_FSE_REST_Route' => __DIR__ . '/../..' . '/modules/full-site-editing/fse-rest-route.php',
+        'PLL_FSE_REST_Template' => __DIR__ . '/../..' . '/modules/full-site-editing/fse-rest-template.php',
+        'PLL_FSE_Recreate_Language' => __DIR__ . '/../..' . '/modules/full-site-editing/fse-recreate-language.php',
+        'PLL_FSE_Template_Deletion' => __DIR__ . '/../..' . '/modules/full-site-editing/fse-template-deletion.php',
+        'PLL_FSE_Template_Model' => __DIR__ . '/../..' . '/modules/full-site-editing/fse-template-model.php',
+        'PLL_FSE_Template_Slug' => __DIR__ . '/../..' . '/modules/full-site-editing/fse-template-slug.php',
+        'PLL_FSE_Template_Slug_Sync' => __DIR__ . '/../..' . '/modules/full-site-editing/fse-template-slug-sync.php',
+        'PLL_FSE_Tools' => __DIR__ . '/../..' . '/modules/full-site-editing/fse-tools.php',
         'PLL_Featured_Content' => __DIR__ . '/..' . '/wpsyntex/polylang/integrations/jetpack/featured-content.php',
         'PLL_File_Format' => __DIR__ . '/../..' . '/modules/import-export/file-format.php',
         'PLL_File_Format_Factory' => __DIR__ . '/../..' . '/modules/import-export/file-format-factory.php',
@@ -90,7 +109,7 @@ class ComposerStaticInit4d5b621faabd546bfdfd9dd79a15310d
         'PLL_Frontend_Translate_Slugs' => __DIR__ . '/../..' . '/modules/translate-slugs/frontend-translate-slugs.php',
         'PLL_Import_Action' => __DIR__ . '/../..' . '/modules/import/import-action.php',
         'PLL_Import_Export' => __DIR__ . '/../..' . '/modules/import-export/import-export.php',
-        'PLL_Import_File' => __DIR__ . '/../..' . '/modules/import/import-file.php',
+        'PLL_Import_File_Interface' => __DIR__ . '/../..' . '/modules/import/import-file-interface.php',
         'PLL_Import_Uploader' => __DIR__ . '/../..' . '/modules/import/import-uploader.php',
         'PLL_Import_Xliff_Iterator' => __DIR__ . '/../..' . '/modules/xliff/import-xliff-iterator.php',
         'PLL_Install' => __DIR__ . '/..' . '/wpsyntex/polylang/install/install.php',
@@ -98,6 +117,7 @@ class ComposerStaticInit4d5b621faabd546bfdfd9dd79a15310d
         'PLL_Integrations' => __DIR__ . '/..' . '/wpsyntex/polylang/integrations/integrations.php',
         'PLL_Jetpack' => __DIR__ . '/..' . '/wpsyntex/polylang/integrations/jetpack/jetpack.php',
         'PLL_Language' => __DIR__ . '/..' . '/wpsyntex/polylang/include/language.php',
+        'PLL_Language_Switcher_Block' => __DIR__ . '/../..' . '/modules/block-editor/language-switcher-block.php',
         'PLL_License' => __DIR__ . '/..' . '/wpsyntex/polylang/include/license.php',
         'PLL_Lingotek' => __DIR__ . '/..' . '/wpsyntex/polylang/modules/lingotek/lingotek.php',
         'PLL_Links' => __DIR__ . '/..' . '/wpsyntex/polylang/include/links.php',
@@ -113,8 +133,10 @@ class ComposerStaticInit4d5b621faabd546bfdfd9dd79a15310d
         'PLL_Media_Bulk_Option' => __DIR__ . '/../..' . '/modules/media/media-bulk-option.php',
         'PLL_Metabox_Button' => __DIR__ . '/../..' . '/modules/metabox-button/metabox-button.php',
         'PLL_Model' => __DIR__ . '/..' . '/wpsyntex/polylang/include/model.php',
+        'PLL_Module_Interface' => __DIR__ . '/../..' . '/modules/module-interface.php',
         'PLL_Multilingual_Sitemaps_Provider' => __DIR__ . '/..' . '/wpsyntex/polylang/modules/sitemaps/multilingual-sitemaps-provider.php',
         'PLL_Nav_Menu' => __DIR__ . '/..' . '/wpsyntex/polylang/include/nav-menu.php',
+        'PLL_Navigation_Language_Switcher_Block' => __DIR__ . '/../..' . '/modules/block-editor/navigation-language-switcher-block.php',
         'PLL_No_Category_Base' => __DIR__ . '/..' . '/wpsyntex/polylang/integrations/no-category-base/no-category-base.php',
         'PLL_OLT_Manager' => __DIR__ . '/..' . '/wpsyntex/polylang/include/olt-manager.php',
         'PLL_PO_Export' => __DIR__ . '/../..' . '/modules/po/po-export.php',
@@ -152,6 +174,7 @@ class ComposerStaticInit4d5b621faabd546bfdfd9dd79a15310d
         'PLL_Sync' => __DIR__ . '/..' . '/wpsyntex/polylang/modules/sync/sync.php',
         'PLL_Sync_Content' => __DIR__ . '/../..' . '/modules/sync/sync-content.php',
         'PLL_Sync_Metas' => __DIR__ . '/..' . '/wpsyntex/polylang/modules/sync/sync-metas.php',
+        'PLL_Sync_Navigation' => __DIR__ . '/../..' . '/modules/sync/sync-navigation.php',
         'PLL_Sync_Post' => __DIR__ . '/../..' . '/modules/sync-post/sync-post.php',
         'PLL_Sync_Post_Bulk_Option' => __DIR__ . '/../..' . '/modules/sync-post/sync-post-bulk-option.php',
         'PLL_Sync_Post_Button' => __DIR__ . '/../..' . '/modules/sync-post/sync-post-button.php',
@@ -202,7 +225,7 @@ class ComposerStaticInit4d5b621faabd546bfdfd9dd79a15310d
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->classMap = ComposerStaticInit4d5b621faabd546bfdfd9dd79a15310d::$classMap;
+            $loader->classMap = ComposerStaticInit97203357add8d9816cdfbfb3848a427c::$classMap;
 
         }, null, ClassLoader::class);
     }

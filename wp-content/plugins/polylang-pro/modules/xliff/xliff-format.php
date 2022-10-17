@@ -17,9 +17,9 @@ class PLL_Xliff_Format extends PLL_File_Format {
 	public $extension = 'xliff';
 
 	/**
-	 * @var string
+	 * @var string[]
 	 */
-	public $mime_type = 'text/xml';
+	public $mime_type = array( 'xlf|xliff' => 'text/xml' );
 
 	/**
 	 * PLL_Xliff_Format constructor.
@@ -27,9 +27,9 @@ class PLL_Xliff_Format extends PLL_File_Format {
 	 * @since 3.1
 	 */
 	public function __construct() {
-		// MIME type does not use same notation for PHP versions < 7.2.
+		// MIME type does not use the same string for PHP versions < 7.2.
 		if ( version_compare( phpversion(), '7.2', '<' ) ) {
-			$this->mime_type = 'application/xml';
+			$this->mime_type = array( 'xlf|xliff' => 'application/xml' );
 		}
 	}
 
