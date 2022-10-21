@@ -1,146 +1,158 @@
-body {
-    &.login {
-        background-size: cover;
+$body-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Ubuntu", Arial, sans-serif;
+
+/** login form */
+body.login {
+    background-size: cover;
+    position: relative;
+    min-height: 100%;
+    height: auto;
+    &::after, &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+    }
+    &::before {
+        opacity: 0.1;
+        background: #000;
+    }
+    .language-switcher {
         position: relative;
-        min-height: 100%;
-        height: auto;
-
-        &::after,
-        &::before {
-            content: "";
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
+        z-index: 99;
+    }
+    form {
+        padding: 26px 24px 40px;
+        &.shake + #nav {
+            animation: shake 0.2s cubic-bezier(0.19, 0.49, 0.38, 0.79) both;
+            animation-iteration-count: 3;
+            transform: translateX(0);
         }
+    }
+}
 
-        &::before {
-            opacity: 0.1;
-            background: #000;
-        }
-
-        .language-switcher {
-            position: relative;
-            z-index: 99;
-        }
-
-        #login {
-            position: relative;
-            z-index: 99;
-
-            h1 {
-                a {
-                    width: auto;
-                    max-width: 100%;
-                    background-position: center center;
-                    height: 65px;
-                    background-size: contain;
-                    margin-bottom: 30px;
-
-                    &:focus {
-                        box-shadow: none;
-                    }
-                }
-            }
-
-            // .button-primary {
-            //     float: none;
-            // }
-            .privacy-policy-link {
-                color: #ec1f27;
-                text-decoration: none;
-            }
-
-            #nav {
-                margin: 0;
-                text-align: right;
-                right: 0;
-                position: relative;
-                top: -59px;
-            }
-
-            #nav,
-            .privacy-policy-link,
-                // .forgetmenot,
-            #backtoblog {
-                display: none;
-            }
-        }
-
-        form {
-            padding: 26px 24px 40px;
-
-            &.shake + #nav {
-                animation: shake 0.2s cubic-bezier(0.19, 0.49, 0.38, 0.79) both;
-                animation-iteration-count: 3;
-                transform: translateX(0);
+/** */
+#login {
+    position: relative;
+    z-index: 99;
+    h1 {
+        a {
+            width: auto;
+            max-width: 100%;
+            background-position: center center;
+            height: 65px;
+            background-size: contain;
+            margin-bottom: 30px;
+            &:focus {
+                box-shadow: none;
             }
         }
     }
-
-    &.post-type-banner {
-        .wp-list-table {
-            .column-post_thumb {
-                width: 120px;
-
-                img {
-                    max-width: 120px;
-                    max-height: 120px;
-                    width: auto;
-                    height: auto;
-                }
-            }
-        }
+    .privacy-policy-link {
+        color: #ec1f27;
+        text-decoration: none;
     }
+    #nav {
+        margin: 0;
+        text-align: right;
+        right: 0;
+        position: relative;
+        top: -59px;
+    }
+    #nav, .privacy-policy-link, #backtoblog {
+        display: none;
+    }
+}
 
-    &.wp-admin {
-        .acf-gallery {
-            height: 205px !important;
-        }
+/** */
+body.post-type-banner {
+    .wp-list-table {
+        .column-post_thumb {
+            width: 120px;
 
-        #rank_math_dashboard_widget {
-            .rank-math-blog-title {
-                display: none;
-            }
-
-            .rank-math-blog-post {
-                display: none;
-            }
-        }
-
-        .rml-update-notice {
-            &.active {
-                display: none;
-            }
-        }
-
-        .acf-editor-wrap {
-            &.html-active {
-                textarea {
-                    height: 100px;
-                }
-            }
-
-            iframe {
-                min-height: 100px;
+            img {
+                max-width: 120px;
                 max-height: 120px;
+                width: auto;
+                height: auto;
             }
         }
     }
 }
 
-.post-type-site-review #contentdiv textarea,
-.post-type-site-review .wp-editor-area {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Ubuntu", "Helvetica Neue", Arial, sans-serif;
+/** */
+body.wp-admin {
+    #rank_math_dashboard_widget {
+        .rank-math-blog-title, .rank-math-blog-post {
+            display: none;
+        }
+    }
+    .acf-editor-wrap {
+        &.html-active {
+            textarea {
+                height: 100px;
+            }
+        }
+        iframe {
+            min-height: 100px;
+            max-height: 300px;
+        }
+    }
+
+    table {
+        &.wp-list-table {
+            .column-post_thumb, .column-term_thumb, .column-thumb {
+                width: 50px;
+                text-align: center;
+                white-space: nowrap;
+                img {
+                    max-width: 50px;
+                    max-height: 50px;
+                    display: block;
+                    height: auto;
+                    margin-left: auto;
+                    margin-right: auto;
+                }
+            }
+            .wc-image {
+                display: block;
+                text-indent: -9999px;
+                position: relative;
+                height: 1em;
+                width: 1em;
+                margin: 0 auto;
+                &::before {
+                    content: "";
+                    font-family: "Dashicons", sans-serif;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    text-align: center;
+                    text-indent: 0;
+                    font-size: 15px;
+                    font-weight: 400;
+                    color: #666;
+                }
+            }
+        }
+    }
 }
 
-#wp-admin-bar-wp-logo {
-    display: none;
+/** */
+.post-type-site-review {
+    #contentdiv textarea,
+    .wp-editor-area {
+        font-family: $body-font-family;
+    }
 }
 
-.wp-admin #whl_settings {
-    display: none !important;
+body.post-type-site-review {
+    #glsr-premium-button {
+        display: none;
+    }
 }
 
 .tips {
@@ -169,74 +181,7 @@ body {
     }
 }
 
-.notice {
-    &.error {
-        &.wpdiscuz-recaptcha,
-        &.wpdiscuz-frontend-moderation {
-            display: none;
-        }
-    }
-}
-
-table {
-    &.wp-list-table {
-        .column-post_thumb,
-        .column-term_thumb {
-            width: 60px;
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        .wc-image {
-            display: block;
-            text-indent: -9999px;
-            position: relative;
-            height: 1em;
-            width: 1em;
-            margin: 0 auto;
-
-            &::before {
-                content: "";
-                font-family: "Dashicons", sans-serif;
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                text-align: center;
-                text-indent: 0;
-                font-size: 15px;
-                font-weight: 400;
-                color: #666;
-            }
-        }
-
-        .column-post_thumb,
-        .column-term_thumb {
-            img {
-                max-width: 60px;
-                max-height: 60px;
-                display: block;
-                height: auto;
-                margin-left: auto;
-                margin-right: auto;
-            }
-        }
-    }
-}
-
-#element-pack-notice-id-license-issue,
-#element-pack-notice-id-license-error {
-    display: none !important;
-}
-
-.php-error {
-    #adminmenuback,
-    #adminmenuwrap {
-        margin-top: 0;
-    }
-}
-
+/** plugin */
 #elementor-editor-wrapper {
     #elementor-preview {
         #elementor-notice-bar {
@@ -258,7 +203,6 @@ table {
             width: 80px;
         }
     }
-
     .acf-label {
         label {
             font-weight: 500;
@@ -278,17 +222,19 @@ div[data-notice_id="elementor_dev_promote"] {
         }
     }
 }
+
 #acf-term-fields {
     &>.acf-field {
         & > .acf-label label {
             font-size: 13px;
-            color: #1d2327;
+            color: #000;
         }
     }
 }
+
 .form-table > tbody > .acf-field > .acf-label label {
     font-weight: 600;
-    color: #1d2327;
+    color: #000;
 }
 
 table.fixed {
@@ -296,28 +242,53 @@ table.fixed {
         width: 74px;
         hyphens: auto;
         padding: 0;
-
         a, span {
             display: block;
             overflow: hidden;
             padding: 8px;
         }
     }
-
     td.column-term_order {
         width: 74px;
         hyphens: auto;
         text-align: center;
     }
 }
+
 .edit-post-meta-boxes-area #poststuff h2.hndle {
-    color: #1e1e1e;
+    color: #000;
 }
 
 .widgets-chooser .widgets-chooser-button {
-    color: #1d2327;
+    color: #000;
 }
 
 .woocommerce-layout__header {
+    display: none !important;
+}
+
+table.wp-list-table .column-price {
+    min-width: 10ch;
+    width: auto;
+    .from {
+        display: none;
+    }
+    del, ins {
+        white-space: nowrap;
+    }
+    ins {
+        color: #ff0000;
+    }
+}
+
+/** */
+#acf-form-data {
+    & ~ h2 {
+        display: none;
+    }
+}
+
+.acf-postbox > .hndle:hover .acf-hndle-cog,
+.acf-postbox > .postbox-header:hover .acf-hndle-cog {
     display: none !important;
 }

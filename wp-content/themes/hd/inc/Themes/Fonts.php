@@ -29,8 +29,9 @@ if ( ! class_exists( 'Fonts' ) ) {
 
 		public function enqueue_scripts() {
 			wp_enqueue_style("fonts-style", get_template_directory_uri() . '/assets/css/fonts.css', [], W_THEME_VERSION);
+            wp_enqueue_style( "montserrat-font", 'https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap', [] );
             wp_enqueue_style( "cg-font", 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&display=swap', [] );
-            wp_enqueue_style( "no-font", 'https://fonts.googleapis.com/css2?family=Norican&display=swap', [] );
+            wp_enqueue_style( "norican-font", 'https://fonts.googleapis.com/css2?family=Norican&display=swap', [] );
 
 			//wp_register_script("fontawesome-kit", "https://kit.fontawesome.com/870d5b0bdf.js", [], false, true);
 			//wp_script_add_data("fontawesome-kit", "defer", true);

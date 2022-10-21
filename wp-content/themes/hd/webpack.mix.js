@@ -15,10 +15,10 @@ mix
     // .copyDirectory(dir + '/resources/fonts/fontawesome/webfonts', assets + '/assets/webfonts')
     // .copyDirectory(dir + '/resources/js/plugins', assets + '/assets/js/plugins')
 
-    //.sass(dir + '/resources/sass/fonts.scss', assets + '/css')
+   // .sass(dir + '/resources/sass/fonts.scss', assets + '/css')
     //.sass(dir + '/resources/sass/admin.scss', assets + '/css')
     //.sass(dir + '/resources/sass/editor-style.scss', assets + '/css')
-    .sass(dir + '/resources/sass/plugins.scss', assets + '/css')
+    //.sass(dir + '/resources/sass/plugins.scss', assets + '/css')
     .sass(dir + '/resources/sass/app.scss', assets + '/css')
 
     //.js(dir + '/resources/js/login.js', assets + '/js')
